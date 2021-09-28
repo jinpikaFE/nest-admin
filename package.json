@@ -33,6 +33,7 @@
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.15",
     "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
