@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './routers/users/users.module';
 import { LoginModule } from './routers/login/login.module';
 import { APP_FILTER } from '@nestjs/core';
-import { AllExceptionsFilter } from './all-exceptions.filter';
+import { AllExceptionsFilter } from './filter/all-exceptions.filter';
 
 @Module({
   imports: [UsersModule, LoginModule],

@@ -1,10 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AllExceptionsFilter } from './all-exceptions.filter';
+import { AllExceptionsFilter } from './filter/all-exceptions.filter';
 import { AppModule } from './app.module';
+import { logger } from './middleware/logger.middleware';
+import * as express from 'express';
+import { TransformInterceptor } from './interceptor/transform.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: console });
+
+  // 日志系统同时解决参数日志打印问题
+  app.use(express.json()); // For parsing application/json
+  app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+  app.use(logger);
+
+  // 使用全局拦截器打印出参
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   const options = new DocumentBuilder()
     .setTitle('JinPiKa')
