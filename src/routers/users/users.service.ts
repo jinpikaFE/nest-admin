@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { RuleResType } from 'src/types/global';
+import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './interface/user';
@@ -13,7 +14,14 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
-    const data = await this.userModel.create(createUserDto);
+    const { userName, password } = createUserDto;
+    const salt = makeSalt(); // 制作密码盐
+    const hashPwd = encryptPassword(password, salt); // 加密密码
+    const data = await this.userModel.create({
+      userName,
+      password: hashPwd,
+      salt,
+    });
     return { code: 0, message: '创建成功', data };
   }
 
