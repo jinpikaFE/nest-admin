@@ -13,14 +13,13 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
-    const createdCat = new this.userModel(createUserDto);
-    const data = await createdCat.save();
+    const data = await this.userModel.create(createUserDto);
     return { code: 0, message: '创建成功', data };
   }
 
   async findAll(): Promise<RuleResType<any>> {
     const data = await this.userModel.find();
-    return { code: 0, message: '创建成功', data };
+    return { code: 0, message: '查询成功', data };
   }
 
   findOne(id: number) {
