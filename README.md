@@ -22,9 +22,25 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## nest-adminadmin
+
+通用的后台管理项目
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[掘金参考文章](https://juejin.cn/column/6960949607794737159)
+基于掘金教程，加入个人想法编写的一套通用admin后端项目
+
+## 主要功能
+
+- JWT登录鉴权
+- log4js日志系统
+- mongodb数据库链接，进行数据处理
+- DTO、class-validator参数校验
+- 基础的RBAC
+- swagger自动生成接口文旦
+- Compodoc生成Nest项目说明文档
 
 ## Installation
 
