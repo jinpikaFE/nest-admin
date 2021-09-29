@@ -41,7 +41,7 @@
 - mongodb数据库链接，进行数据处理
 - DTO、class-validator参数校验
 - 基础的RBAC
-- swagger自动生成接口文旦
+- swagger自动生成接口文档
 - Compodoc生成Nest项目说明文档
 
 ## Installation
