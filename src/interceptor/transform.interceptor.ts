@@ -19,7 +19,7 @@ export class TransformInterceptor implements NestInterceptor {
     Request original url: ${req.originalUrl}
     Method: ${req.method}
     IP: ${req.ip}
-    User: ${JSON.stringify(req.user)}
+    User: ${JSON.stringify(req.headers.user)}
     Response data:\n ${JSON.stringify(data.data)}
     <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<`;
         Logger.info(logFormat);

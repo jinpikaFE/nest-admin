@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { RbacInterceptor } from 'src/interceptor/rbac.interceptor';
 
 @ApiTags('users')
 @UseGuards(AuthGuard('jwt'))
@@ -27,6 +29,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseInterceptors(new RbacInterceptor(['admin', 'user']))
   findAll() {
     return this.usersService.findAll();
   }
