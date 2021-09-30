@@ -38,7 +38,7 @@ export class LoginService {
       default:
         return {
           code: -1,
-          message: '查无此人',
+          message: '账号不存在',
           data: null,
         };
     }
