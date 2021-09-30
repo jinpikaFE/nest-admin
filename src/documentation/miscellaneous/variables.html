@@ -1,0 +1,420 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>nwst-admin documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css" media="(prefers-color-scheme: dark)">
+    </head>
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top visible-xs">
+            <a href="../" class="navbar-brand">nwst-admin documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-variables">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li>Miscellaneous</li>
+  <li>Variables</li>
+</ol>
+
+<section>
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#baseLogPath" title="src/config/log4js.ts" ><b>baseLogPath</b>&nbsp;&nbsp;&nbsp;(src/.../log4js.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#databaseProviders" title="src/providers/database/database.providers.ts" ><b>databaseProviders</b>&nbsp;&nbsp;&nbsp;(src/.../database.providers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#jwtConstants" title="src/logical/auth/constats.ts" ><b>jwtConstants</b>&nbsp;&nbsp;&nbsp;(src/.../constats.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#log4jsConfig" title="src/config/log4js.ts" ><b>log4jsConfig</b>&nbsp;&nbsp;&nbsp;(src/.../log4js.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#logger" title="src/utils/log4js.ts" ><b>logger</b>&nbsp;&nbsp;&nbsp;(src/.../log4js.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#UserSchema" title="src/routers/users/schema/user.schema.ts" ><b>UserSchema</b>&nbsp;&nbsp;&nbsp;(src/.../user.schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#usersProviders" title="src/routers/users/users.providers.ts" ><b>usersProviders</b>&nbsp;&nbsp;&nbsp;(src/.../users.providers.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/config/log4js.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="baseLogPath"></a>
+                    <span class="name">
+                        <span ><b>baseLogPath</b></span>
+                        <a href="#baseLogPath"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>path.resolve(__dirname, &#x27;../../logs&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="log4jsConfig"></a>
+                    <span class="name">
+                        <span ><b>log4jsConfig</b></span>
+                        <a href="#log4jsConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  appenders: {
+    console: {
+      type: &#x27;console&#x27;, // 会打印到控制台
+    },
+    access: {
+      type: &#x27;dateFile&#x27;, // 会写入文件，并按照日期分类
+      filename: &#x60;${baseLogPath}/access/access.log&#x60;, // 日志文件名，会命名为：access.20200320.log
+      alwaysIncludePattern: true,
+      pattern: &#x27;yyyyMMdd&#x27;,
+      daysToKeep: 60,
+      numBackups: 3,
+      category: &#x27;http&#x27;,
+      keepFileExt: true, // 是否保留文件后缀
+    },
+    app: {
+      type: &#x27;dateFile&#x27;,
+      filename: &#x60;${baseLogPath}/app-out/app.log&#x60;,
+      alwaysIncludePattern: true,
+      layout: {
+        type: &#x27;pattern&#x27;,
+        pattern:
+          &#x27;{&quot;date&quot;:&quot;%d&quot;,&quot;level&quot;:&quot;%p&quot;,&quot;category&quot;:&quot;%c&quot;,&quot;host&quot;:&quot;%h&quot;,&quot;pid&quot;:&quot;%z&quot;,&quot;data&quot;:\&#x27;%m\&#x27;}&#x27;,
+      },
+      // 日志文件按日期（天）切割
+      pattern: &#x27;yyyyMMdd&#x27;,
+      daysToKeep: 60,
+      // maxLogSize: 10485760,
+      numBackups: 3,
+      keepFileExt: true,
+    },
+    errorFile: {
+      type: &#x27;dateFile&#x27;,
+      filename: &#x60;${baseLogPath}/errors/error.log&#x60;,
+      alwaysIncludePattern: true,
+      layout: {
+        type: &#x27;pattern&#x27;,
+        pattern:
+          &#x27;{&quot;date&quot;:&quot;%d&quot;,&quot;level&quot;:&quot;%p&quot;,&quot;category&quot;:&quot;%c&quot;,&quot;host&quot;:&quot;%h&quot;,&quot;pid&quot;:&quot;%z&quot;,&quot;data&quot;:\&#x27;%m\&#x27;}&#x27;,
+      },
+      // 日志文件按日期（天）切割
+      pattern: &#x27;yyyyMMdd&#x27;,
+      daysToKeep: 60,
+      // maxLogSize: 10485760,
+      numBackups: 3,
+      keepFileExt: true,
+    },
+    errors: {
+      type: &#x27;logLevelFilter&#x27;,
+      level: &#x27;ERROR&#x27;,
+      appender: &#x27;errorFile&#x27;,
+    },
+  },
+  categories: {
+    default: {
+      appenders: [&#x27;app&#x27;, &#x27;errors&#x27;],
+      level: &#x27;DEBUG&#x27;,
+    },
+    info: { appenders: [&#x27;app&#x27;, &#x27;errors&#x27;], level: &#x27;info&#x27; },
+    access: { appenders: [&#x27;app&#x27;, &#x27;errors&#x27;], level: &#x27;info&#x27; },
+    http: { appenders: [&#x27;access&#x27;], level: &#x27;DEBUG&#x27; },
+  },
+  pm2: true, // 使用 pm2 来管理项目时，打开
+  pm2InstanceVar: &#x27;INSTANCE_ID&#x27;, // 会根据 pm2 分配的 id 进行区分，以免各进程在写日志时造成冲突
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/providers/database/database.providers.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="databaseProviders"></a>
+                    <span class="name">
+                        <span ><b>databaseProviders</b></span>
+                        <a href="#databaseProviders"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  {
+    provide: &#x27;DbConnectionToken&#x27;,
+    useFactory: async (): Promise&lt;typeof mongoose&gt; &#x3D;&gt;
+      await mongoose.connect(&#x27;mongodb://127.0.0.1:27017/nest-admin&#x27;),
+  },
+]</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/logical/auth/constats.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="jwtConstants"></a>
+                    <span class="name">
+                        <span ><b>jwtConstants</b></span>
+                        <a href="#jwtConstants"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  secret: &#x27;jinpika0517&#x27;, // 秘钥
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/utils/log4js.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>Log4js.getLogger()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/routers/users/schema/user.schema.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="UserSchema"></a>
+                    <span class="name">
+                        <span ><b>UserSchema</b></span>
+                        <a href="#UserSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new mongoose.Schema({
+  userName: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  salt: {
+    type: String,
+    required: true,
+  },
+  registerTime: {
+    type: Date,
+    default: Date.now,
+  },
+})</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/routers/users/users.providers.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="usersProviders"></a>
+                    <span class="name">
+                        <span ><b>usersProviders</b></span>
+                        <a href="#usersProviders"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  {
+    provide: &#x27;UserModelToken&#x27;,
+    useFactory: (connection: Connection) &#x3D;&gt;
+      connection.model(&#x27;User&#x27;, UserSchema),
+    inject: [&#x27;DbConnectionToken&#x27;],
+  },
+]</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-variables';
+            var COMPODOC_CURRENT_PAGE_URL = 'variables.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
