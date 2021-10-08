@@ -34,7 +34,7 @@
 
 基于掘金教程，加入个人想法编写的一套通用admin后端项目
 
-[项目文档实例](http://nestadmin.jinxinapp.cn/documentation)
+[项目文档实例](http://nestadmin.jinxinapp.cn/doc)
 
 [swagger实例](http://nestadmin.jinxinapp.cn/docs/)
 

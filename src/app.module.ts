@@ -14,6 +14,7 @@ import { join } from 'path';
     AuthModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'documentation'),
+      serveRoot: '/doc',
     }),
   ],
   providers: [
