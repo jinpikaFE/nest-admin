@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from './filter/all-exceptions.filter';
 import { AuthModule } from './logical/auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MenuModule } from './routers/menu/menu.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'documentation'),
       serveRoot: '/doc',
     }),
+    MenuModule,
   ],
   providers: [
     {

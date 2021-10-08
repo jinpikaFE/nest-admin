@@ -10,7 +10,7 @@ import { plainToClass } from 'class-transformer';
 import { Logger } from '../utils/log4js';
 
 @Injectable()
-export class ValidationPipe implements PipeTransform {
+export class MyValidationPipe implements PipeTransform {
   async transform(value: any, { metatype }: ArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) {
       // 如果没有传入验证规则，则不验证，直接返回数据
