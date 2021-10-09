@@ -23,4 +23,8 @@ export class CreateMenuDto {
   @IsEnum([0, 1])
   @ApiProperty()
   readonly status: 0 | 1;
+
+  @IsEnum([0, 1])
+  @ApiProperty()
+  readonly isLink: 0 | 1;
 }

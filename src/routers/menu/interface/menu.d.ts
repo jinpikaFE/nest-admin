@@ -6,4 +6,5 @@ export interface IMenu extends Document {
   readonly lastMenu?: string;
   readonly icon: string;
   readonly status: 0 | 1;
+  readonly isLink: 0 | 1;
 }

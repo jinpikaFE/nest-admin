@@ -12,13 +12,14 @@ export class MenuService {
   ) {}
 
   async create(createMenuDto: CreateMenuDto): Promise<RuleResType<any>> {
-    const { name, path, lastMenu, icon, status } = createMenuDto;
+    const { name, path, lastMenu, icon, status, isLink } = createMenuDto;
     const data = await this.menuModel.create({
       name,
       path,
       lastMenu,
       icon,
       status,
+      isLink,
     });
     return { code: 0, message: '创建成功', data };
   }
