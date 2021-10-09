@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { RuleResType } from 'src/types/global';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { UpdateMenuDto } from './dto/update-menu.dto';
 import { IMenu } from './interface/menu';
 
 @Injectable()
@@ -33,11 +32,25 @@ export class MenuService {
     return `This action returns a #${id} menu`;
   }
 
-  update(id: number, updateMenuDto: UpdateMenuDto) {
-    return `This action updates a #${id} menu`;
+  async update(
+    id: string,
+    updateMenuDto: CreateMenuDto,
+  ): Promise<RuleResType<any>> {
+    const data = await this.menuModel.findOneAndUpdate(
+      { _id: id },
+      updateMenuDto,
+    );
+    if (data) {
+      return { code: 0, message: '更新成功', data };
+    }
+    return { code: -1, message: '更新失败', data };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} menu`;
+  async remove(id: string): Promise<RuleResType<any>> {
+    const data = await this.menuModel.remove({ _id: id });
+    if (data?.deletedCount >= 1) {
+      return { code: 0, message: '删除成功', data };
+    }
+    return { code: -1, message: '删除失败', data };
   }
 }

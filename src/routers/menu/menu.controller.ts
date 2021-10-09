@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { UpdateMenuDto } from './dto/update-menu.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
@@ -39,13 +38,15 @@ export class MenuController {
     return this.menuService.findOne(+id);
   }
 
+  @UsePipes(new MyValidationPipe())
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
-    return this.menuService.update(+id, updateMenuDto);
+  @ApiBody({ type: CreateMenuDto })
+  update(@Param('id') id: string, @Body() updateMenuDto: CreateMenuDto) {
+    return this.menuService.update(id, updateMenuDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.menuService.remove(+id);
+    return this.menuService.remove(id);
   }
 }
