@@ -19,6 +19,10 @@ export const MenuSchema = new mongoose.Schema({
     type: Number,
     enum: [0, 1],
   },
+  authority: {
+    type: [String],
+    default: ['admin'],
+  },
   lastMenu: String,
   registerTime: {
     type: Date,
