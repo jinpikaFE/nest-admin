@@ -7,6 +7,7 @@ import { AuthModule } from './logical/auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MenuModule } from './routers/menu/menu.module';
+import { RolesModule } from './routers/roles/roles.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MenuModule } from './routers/menu/menu.module';
       serveRoot: '/doc',
     }),
     MenuModule,
+    RolesModule,
   ],
   providers: [
     {
