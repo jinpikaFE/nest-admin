@@ -13,9 +13,10 @@ export class RolesService {
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<RuleResType<any>> {
-    const { name } = createRoleDto;
+    const { name, authority } = createRoleDto;
     const data = await this.roleModel.create({
       name,
+      authority,
     });
     if (data) {
       return { code: 0, message: '创建成功', data };
@@ -28,8 +29,9 @@ export class RolesService {
     return { code: 0, message: '查询成功', data };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async findOne(id: string): Promise<RuleResType<any>> {
+    const data = await this.roleModel.findById(id);
+    return { code: 0, message: '查询成功', data };
   }
 
   async update(

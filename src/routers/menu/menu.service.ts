@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { RuleResType } from 'src/types/global';
 import { CreateMenuDto } from './dto/create-menu.dto';
+import { UpdateMenuDto } from './dto/update-menu.dto';
 import { IMenu } from './interface/menu';
 
 @Injectable()
@@ -12,7 +13,7 @@ export class MenuService {
   ) {}
 
   async create(createMenuDto: CreateMenuDto): Promise<RuleResType<any>> {
-    const { name, path, lastMenu, icon, status, isLink } = createMenuDto;
+    const { name, path, lastMenu, icon, status, isLink, color } = createMenuDto;
     const data = await this.menuModel.create({
       name,
       path,
@@ -20,6 +21,7 @@ export class MenuService {
       icon,
       status,
       isLink,
+      color,
     });
     return { code: 0, message: '创建成功', data };
   }
@@ -53,5 +55,17 @@ export class MenuService {
       return { code: 0, message: '删除成功', data };
     }
     return { code: -1, message: '删除失败', data };
+  }
+
+  async updateMany(updateMenuDto: UpdateMenuDto): Promise<RuleResType<any>> {
+    const { name, authority } = updateMenuDto;
+    const data = await this.menuModel.updateMany(
+      { _id: { $in: authority } },
+      { $push: { authority: name } },
+    );
+    if (data) {
+      return { code: 0, message: '更新成功', data };
+    }
+    return { code: -1, message: '更新失败', data };
   }
 }

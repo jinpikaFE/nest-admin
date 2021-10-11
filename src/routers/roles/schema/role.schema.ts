@@ -6,6 +6,9 @@ export const RoleSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  authority: {
+    type: [String],
+  },
   registerTime: {
     type: Date,
     default: Date.now,

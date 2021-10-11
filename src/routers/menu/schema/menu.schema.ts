@@ -23,6 +23,10 @@ export const MenuSchema = new mongoose.Schema({
     type: Number,
     enum: [0, 1],
   },
+  color: {
+    type: String,
+    required: true,
+  },
   authority: {
     type: [String],
     default: ['admin'],

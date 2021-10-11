@@ -14,6 +14,7 @@ import { CreateMenuDto } from './dto/create-menu.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
+import { UpdateMenuDto } from './dto/update-menu.dto';
 
 @ApiTags('menu')
 @UseGuards(AuthGuard('jwt'))
@@ -48,5 +49,12 @@ export class MenuController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.menuService.remove(id);
+  }
+
+  @UsePipes(new MyValidationPipe())
+  @Post('/many')
+  @ApiBody({ type: UpdateMenuDto })
+  updateMany(@Body() updateMenuDto: UpdateMenuDto) {
+    return this.menuService.updateMany(updateMenuDto);
   }
 }

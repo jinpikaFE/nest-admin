@@ -20,6 +20,11 @@ export class CreateMenuDto {
   @ApiProperty()
   readonly icon: string;
 
+  @IsString({ message: '标签颜色必须是 String 类型' })
+  @IsNotEmpty({ message: '标签不能为空' })
+  @ApiProperty()
+  readonly color: string;
+
   @IsEnum([0, 1])
   @ApiProperty()
   readonly status: 0 | 1;
