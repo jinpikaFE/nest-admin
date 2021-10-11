@@ -7,7 +7,6 @@ export class UpdateMenuDto {
   @ApiProperty({ uniqueItems: true })
   readonly name: string;
 
-  @IsNotEmpty({ message: '权限不能为空' })
   @ApiProperty()
-  readonly authority: string[];
+  readonly authority?: string[];
 }

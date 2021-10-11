@@ -59,10 +59,18 @@ export class MenuService {
 
   async updateMany(updateMenuDto: UpdateMenuDto): Promise<RuleResType<any>> {
     const { name, authority } = updateMenuDto;
-    const data = await this.menuModel.updateMany(
-      { _id: { $in: authority } },
-      { $push: { authority: name } },
-    );
+    let data = null;
+    if (authority) {
+      data = await this.menuModel.updateMany(
+        { _id: { $in: authority } },
+        { $push: { authority: name } },
+      );
+    } else {
+      data = await this.menuModel.updateMany(
+        { authority: name },
+        { $pull: { authority: name } },
+      );
+    }
     if (data) {
       return { code: 0, message: '更新成功', data };
     }
