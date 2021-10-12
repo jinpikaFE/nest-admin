@@ -24,9 +24,32 @@ export class RolesService {
     return { code: -1, message: '创建失败', data };
   }
 
-  async findAll(): Promise<RuleResType<any>> {
-    const data = await this.roleModel.find();
-    return { code: 0, message: '查询成功', data };
+  async findAll(params): Promise<RuleResType<any>> {
+    const {
+      current,
+      pageSize,
+      registerTime,
+      name,
+      authority,
+      startTime,
+      endTime,
+    } = params;
+    const findObj: any = {};
+    name && (findObj.name = eval(`/${name}/i`));
+    authority && (findObj.authority = { $in: authority });
+    startTime &&
+      endTime &&
+      (findObj.registerTime = {
+        $gte: new Date(startTime),
+        $lte: new Date(endTime),
+      });
+    const data = await this.roleModel
+      .find(findObj)
+      .skip((Number(current) - 1) * Number(pageSize))
+      .limit(Number(pageSize))
+      .sort({ registerTime: registerTime === 'descend' ? -1 : 1 });
+    const total = await this.roleModel.find(findObj).count();
+    return { code: 0, message: '查询成功', data, total };
   }
 
   async findOne(id: string): Promise<RuleResType<any>> {
