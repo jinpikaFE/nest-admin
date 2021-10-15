@@ -21,7 +21,7 @@ export class CreateMenuDto {
   readonly icon: string;
 
   @IsString({ message: '标签颜色必须是 String 类型' })
-  @IsNotEmpty({ message: '标签不能为空' })
+  @IsNotEmpty({ message: '标签颜色不能为空' })
   @ApiProperty()
   readonly color: string;
 
