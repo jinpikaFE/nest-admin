@@ -14,13 +14,17 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
-    const { userName, password } = createUserDto;
+    const { userName, password, email, phone, role, avatar } = createUserDto;
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
     const data = await this.userModel.create({
       userName,
       password: hashPwd,
       salt,
+      email,
+      phone,
+      role,
+      avatar,
     });
     return { code: 0, message: '创建成功', data };
   }
@@ -34,11 +38,25 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<RuleResType<any>> {
+    const data = await this.userModel.findOneAndUpdate(
+      { _id: id },
+      updateUserDto,
+    );
+    if (data) {
+      return { code: 0, message: '更新成功', data };
+    }
+    return { code: -1, message: '更新失败', data };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string): Promise<RuleResType<any>> {
+    const data = await this.userModel.remove({ _id: id });
+    if (data?.deletedCount >= 1) {
+      return { code: 0, message: '删除成功', data };
+    }
+    return { code: -1, message: '删除失败', data };
   }
 }

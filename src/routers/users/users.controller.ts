@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   UseInterceptors,
+  UsePipes,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RbacInterceptor } from 'src/interceptor/rbac.interceptor';
+import { MyValidationPipe } from 'src/pipe/validation.pipe';
 
 @ApiTags('users')
 @UseGuards(AuthGuard('jwt'))
@@ -22,6 +24,7 @@ import { RbacInterceptor } from 'src/interceptor/rbac.interceptor';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UsePipes(new MyValidationPipe())
   @Post()
   @ApiBody({ type: CreateUserDto })
   create(@Body() createUserDto: CreateUserDto) {
@@ -39,13 +42,14 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
+  @UsePipes(new MyValidationPipe())
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 }

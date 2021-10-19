@@ -24,7 +24,7 @@ export class RolesService {
     return { code: -1, message: '创建失败', data };
   }
 
-  async findAll(params): Promise<RuleResType<any>> {
+  async filterQuery(params): Promise<RuleResType<any>> {
     const {
       current,
       pageSize,
@@ -50,6 +50,11 @@ export class RolesService {
       .sort({ registerTime: registerTime === 'descend' ? -1 : 1 });
     const total = await this.roleModel.find(findObj).count();
     return { code: 0, message: '查询成功', data, total };
+  }
+
+  async findAll(): Promise<RuleResType<any>> {
+    const data = await this.roleModel.find();
+    return { code: 0, message: '查询成功', data };
   }
 
   async findOne(id: string): Promise<RuleResType<any>> {

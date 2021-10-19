@@ -31,8 +31,13 @@ export class RolesController {
   }
 
   @Get()
-  findAll(@Query() Query) {
-    return this.rolesService.findAll(Query);
+  filterQuery(@Query() Query) {
+    return this.rolesService.filterQuery(Query);
+  }
+
+  @Get('/all')
+  findAll() {
+    return this.rolesService.findAll();
   }
 
   @Get(':id')
@@ -40,7 +45,9 @@ export class RolesController {
     return this.rolesService.findOne(id);
   }
 
+  @UsePipes(new MyValidationPipe())
   @Patch(':id')
+  @ApiBody({ type: UpdateRoleDto })
   update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(id, updateRoleDto);
   }
