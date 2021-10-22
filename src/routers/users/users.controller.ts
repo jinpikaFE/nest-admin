@@ -7,16 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
-  UseInterceptors,
   UsePipes,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { RbacInterceptor } from 'src/interceptor/rbac.interceptor';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { Request } from 'express';
 
@@ -34,9 +33,8 @@ export class UsersController {
   }
 
   @Get()
-  @UseInterceptors(new RbacInterceptor(['admin', 'user']))
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() Query) {
+    return this.usersService.findAll(Query);
   }
 
   @Get(':id')
@@ -50,8 +48,8 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Delete(':id/:fileName')
+  remove(@Param('id') id: string, @Param('fileName') fileName: string) {
+    return this.usersService.remove(id, fileName);
   }
 }

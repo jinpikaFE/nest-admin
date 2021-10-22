@@ -13,6 +13,22 @@ export class LoginService {
         userName,
         password,
       );
+      const {
+        userName: name,
+        email,
+        phone,
+        role,
+        avatar,
+        registerTime,
+      } = authResult?.user;
+      const userInfo = {
+        userName: name,
+        email,
+        phone,
+        role,
+        avatar,
+        registerTime,
+      };
       switch (authResult.code) {
         case 0:
           const res = await this.authService.certificate(authResult?.user);
@@ -23,7 +39,7 @@ export class LoginService {
               data: {
                 token: res?.data?.token,
                 role: 'admin',
-                name: 'admin',
+                userName: 'admin',
               },
             };
           }
@@ -31,6 +47,7 @@ export class LoginService {
             code: 0,
             message: '登录成功',
             data: {
+              ...userInfo,
               token: res?.data?.token,
             },
           };

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import * as path from 'path';
 import { RuleResType } from 'src/types/global';
-import { base64ToFile } from 'src/utils';
+import { base64ToFile, fs_delete } from 'src/utils';
 import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -31,7 +31,7 @@ export class UsersService {
           path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
         )
       : false;
-    const data = await this.userModel.create({
+    await this.userModel.create({
       userName,
       password: hashPwd,
       salt,
@@ -49,12 +49,39 @@ export class UsersService {
           ]
         : '',
     });
-    return { code: 0, message: '创建成功', data };
+    return { code: 0, message: '创建成功', data: null };
   }
 
-  async findAll(): Promise<RuleResType<any>> {
-    const data = await this.userModel.find();
-    return { code: 0, message: '查询成功', data };
+  async findAll(params): Promise<RuleResType<any>> {
+    const {
+      current,
+      pageSize,
+      registerTime,
+      userName,
+      role,
+      email,
+      phone,
+      startTime,
+      endTime,
+    } = params;
+    const findObj: any = {};
+    email && (findObj.email = eval(`/${email}/i`));
+    phone && (findObj.phone = eval(`/${phone}/i`));
+    userName && (findObj.userName = eval(`/${userName}/i`));
+    role && (findObj.role = { $in: role });
+    startTime &&
+      endTime &&
+      (findObj.registerTime = {
+        $gte: new Date(startTime),
+        $lte: new Date(endTime),
+      });
+    const data = await this.userModel
+      .find(findObj, { password: 0, salt: 0 })
+      .skip((Number(current) - 1) * Number(pageSize))
+      .limit(Number(pageSize))
+      .sort({ registerTime: registerTime === 'descend' ? -1 : 1 });
+    const total = await this.userModel.find(findObj).count();
+    return { code: 0, message: '查询成功', data, total };
   }
 
   findOne(id: number) {
@@ -75,10 +102,16 @@ export class UsersService {
     return { code: -1, message: '更新失败', data };
   }
 
-  async remove(id: string): Promise<RuleResType<any>> {
+  async remove(id: string, fileName): Promise<RuleResType<any>> {
     const data = await this.userModel.remove({ _id: id });
     if (data?.deletedCount >= 1) {
-      return { code: 0, message: '删除成功', data };
+      const res = fs_delete(
+        path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+      );
+      if (res) {
+        return { code: 0, message: '删除成功', data: null };
+      }
+      return { code: -1, message: '删除失败', data };
     }
     return { code: -1, message: '删除失败', data };
   }

@@ -13,3 +13,14 @@ export const base64ToFile = (imgData, path) => {
   }) as fs.WriteFileOptions);
   return true;
 };
+
+export const fs_delete = (path) => {
+  fs.unlink(path, (err) => {
+    if (err) {
+      return false;
+    } else {
+      return true;
+    }
+  });
+  return true;
+};
