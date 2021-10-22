@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
+import * as path from 'path';
 import { RuleResType } from 'src/types/global';
+import { base64ToFile } from 'src/utils';
 import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './interface/user';
+import { Request } from 'express';
 
 @Injectable()
 export class UsersService {
@@ -13,10 +16,21 @@ export class UsersService {
     private readonly userModel: Model<IUser>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
+  async create(
+    createUserDto: CreateUserDto,
+    request: Request,
+  ): Promise<RuleResType<any>> {
     const { userName, password, email, phone, role, avatar } = createUserDto;
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
+    const fileName = `avatar_${new Date().getTime()}`;
+    // 头像传过来则上传为文件，切用url储存
+    const res = avatar
+      ? base64ToFile(
+          avatar,
+          path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+        )
+      : false;
     const data = await this.userModel.create({
       userName,
       password: hashPwd,
@@ -24,7 +38,16 @@ export class UsersService {
       email,
       phone,
       role,
-      avatar,
+      avatar: res
+        ? [
+            {
+              uid: fileName,
+              name: `${fileName}.png`,
+              status: 'done',
+              url: `${request?.get('host')}/assets/${fileName}.png`,
+            },
+          ]
+        : '',
     });
     return { code: 0, message: '创建成功', data };
   }

@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,6 +18,7 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RbacInterceptor } from 'src/interceptor/rbac.interceptor';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
+import { Request } from 'express';
 
 @ApiTags('users')
 @UseGuards(AuthGuard('jwt'))
@@ -27,8 +29,8 @@ export class UsersController {
   @UsePipes(new MyValidationPipe())
   @Post()
   @ApiBody({ type: CreateUserDto })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto, @Req() request: Request) {
+    return this.usersService.create(createUserDto, request);
   }
 
   @Get()

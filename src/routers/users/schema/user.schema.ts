@@ -20,7 +20,7 @@ export const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  avatar: String,
+  avatar: mongoose.Schema.Types.Mixed,
   password: {
     type: String,
     required: true,
