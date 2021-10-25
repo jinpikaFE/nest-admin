@@ -44,8 +44,13 @@ export class UsersController {
 
   @UsePipes(new MyValidationPipe())
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  @ApiBody({ type: UpdateUserDto })
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() request: Request,
+  ) {
+    return this.usersService.update(id, updateUserDto, request);
   }
 
   @Delete(':id/:fileName')

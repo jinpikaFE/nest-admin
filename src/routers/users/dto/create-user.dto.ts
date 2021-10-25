@@ -32,5 +32,5 @@ export class CreateUserDto {
   readonly captcha: string;
 
   @ApiProperty()
-  readonly avatar?: string;
+  readonly avatar?: any[] | string;
 }

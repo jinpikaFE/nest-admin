@@ -8,5 +8,5 @@ export interface IUser extends Document {
   readonly phone: string;
   readonly role: string;
   readonly captcha: string;
-  readonly avatar?: string;
+  readonly avatar?: any[] | string;
 }

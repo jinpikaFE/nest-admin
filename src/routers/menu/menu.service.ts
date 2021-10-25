@@ -61,6 +61,10 @@ export class MenuService {
     const { name, authority } = updateMenuDto;
     let data = null;
     if (authority) {
+      await this.menuModel.updateMany(
+        { authority: name },
+        { $pull: { authority: name } },
+      );
       data = await this.menuModel.updateMany(
         { _id: { $in: authority } },
         { $push: { authority: name } },

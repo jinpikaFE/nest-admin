@@ -44,7 +44,9 @@ export class UsersService {
               uid: fileName,
               name: `${fileName}.png`,
               status: 'done',
-              url: `${request?.get('host')}/assets/${fileName}.png`,
+              url: `${request.protocol}://${request?.get(
+                'host',
+              )}/assets/${fileName}.png`,
             },
           ]
         : '',
@@ -91,10 +93,61 @@ export class UsersService {
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
+    request: Request,
   ): Promise<RuleResType<any>> {
+    const fileName = `avatar_${new Date().getTime()}`;
+    const { userName, email, phone, role, avatar } = updateUserDto;
+    const resFind = await this.userModel.findById(id);
+    let upAvatar;
+    // 头像传过来则上传为文件，切用url储存
+    if (
+      resFind &&
+      resFind.avatar?.[0]?.uid === avatar?.[0]?.uid &&
+      resFind.avatar
+    ) {
+      upAvatar = avatar;
+    } else {
+      const fileName = `avatar_${new Date().getTime()}`;
+      const removeAndUp = () => {
+        if (resFind.avatar && resFind.avatar?.[0]?.name) {
+          fs_delete(
+            path.join(
+              __dirname,
+              '../../../',
+              `src/assets/${resFind.avatar?.[0]?.uid}.png`,
+            ),
+          );
+        }
+        base64ToFile(
+          avatar,
+          path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+        );
+        return true;
+      };
+      // 头像传过来则上传为文件，切用url储存
+      const res = avatar ? removeAndUp() : false;
+      upAvatar = res
+        ? [
+            {
+              uid: fileName,
+              name: `${fileName}.png`,
+              status: 'done',
+              url: `${request.protocol}://${request?.get(
+                'host',
+              )}/assets/${fileName}.png`,
+            },
+          ]
+        : '';
+    }
     const data = await this.userModel.findOneAndUpdate(
       { _id: id },
-      updateUserDto,
+      {
+        userName,
+        email,
+        phone,
+        role,
+        avatar: upAvatar,
+      },
     );
     if (data) {
       return { code: 0, message: '更新成功', data };

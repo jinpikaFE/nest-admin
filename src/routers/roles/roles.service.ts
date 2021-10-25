@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { RuleResType } from 'src/types/global';
+import { IUser } from '../users/interface/user';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { IRole } from './interface/role';
@@ -10,6 +11,8 @@ export class RolesService {
   constructor(
     @Inject('RoleModelToken')
     private readonly roleModel: Model<IRole>,
+    @Inject('UserModelToken')
+    private readonly userModel: Model<IUser>,
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<RuleResType<any>> {
@@ -76,11 +79,16 @@ export class RolesService {
     return { code: -1, message: '更新失败', data };
   }
 
-  async remove(id: string): Promise<RuleResType<any>> {
-    const data = await this.roleModel.remove({ _id: id });
-    if (data?.deletedCount >= 1) {
-      return { code: 0, message: '删除成功', data };
+  async remove(id: string, name: string): Promise<RuleResType<any>> {
+    const resUser = await this.userModel.find({ role: name });
+    if (resUser.length > 0) {
+      return { code: -1, message: '删除失败,该角色下存在用户', data: null };
+    } else {
+      const data = await this.roleModel.remove({ _id: id });
+      if (data?.deletedCount >= 1) {
+        return { code: 0, message: '删除成功', data };
+      }
+      return { code: -1, message: '删除失败', data };
     }
-    return { code: -1, message: '删除失败', data };
   }
 }
