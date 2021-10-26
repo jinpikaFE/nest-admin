@@ -95,7 +95,6 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
     request: Request,
   ): Promise<RuleResType<any>> {
-    const fileName = `avatar_${new Date().getTime()}`;
     const { userName, email, phone, role, avatar } = updateUserDto;
     const resFind = await this.userModel.findById(id);
     let upAvatar;
