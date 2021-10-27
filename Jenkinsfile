@@ -12,6 +12,7 @@ pipeline {
         stage('Yarn') { 
             steps {
                 sh 'yarn' 
+                echo 'yarn'
             }
         }
         stage('Build') {
