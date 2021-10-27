@@ -28,7 +28,7 @@ export class UsersService {
     const res = avatar
       ? base64ToFile(
           avatar,
-          path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+          path.join(__dirname, '../../../', `src/asset/${fileName}.png`),
         )
       : false;
     await this.userModel.create({
@@ -46,7 +46,7 @@ export class UsersService {
               status: 'done',
               url: `${request.protocol}://${request?.get(
                 'host',
-              )}/assets/${fileName}.png`,
+              )}/asset/${fileName}.png`,
             },
           ]
         : '',
@@ -113,7 +113,7 @@ export class UsersService {
             path.join(
               __dirname,
               '../../../',
-              `src/assets/${resFind.avatar?.[0]?.uid}.png`,
+              `src/asset/${resFind.avatar?.[0]?.uid}.png`,
             ),
           );
         }
@@ -133,7 +133,7 @@ export class UsersService {
               status: 'done',
               url: `${request.protocol}://${request?.get(
                 'host',
-              )}/assets/${fileName}.png`,
+              )}/asset/${fileName}.png`,
             },
           ]
         : '';
@@ -158,7 +158,7 @@ export class UsersService {
     const data = await this.userModel.remove({ _id: id });
     if (data?.deletedCount >= 1) {
       const res = fs_delete(
-        path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+        path.join(__dirname, '../../../', `src/asset/${fileName}.png`),
       );
       if (res) {
         return { code: 0, message: '删除成功', data: null };

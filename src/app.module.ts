@@ -20,7 +20,11 @@ import { RolesModule } from './routers/roles/roles.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'src/assets'),
-      serveRoot: '/assets',
+      serveRoot: '/asset',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'web'),
+      serveRoot: '',
     }),
     MenuModule,
     RolesModule,
