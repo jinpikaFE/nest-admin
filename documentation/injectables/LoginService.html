@@ -78,6 +78,7 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
+                                    <span class="modifier">Async</span>
                                 <a href="#login" >login</a>
                             </li>
                         </ul>
@@ -92,6 +93,54 @@
     </table>
 </section>
 
+            <section>
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(authService: <a href="../injectables/AuthService.html" target="_self">AuthService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/routers/login/login.service.ts:7</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>authService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AuthService.html" target="_self" >AuthService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
 
             <section>
     
@@ -104,6 +153,7 @@
                 <td class="col-md-4">
                     <a name="login"></a>
                     <span class="name">
+                        <span class="modifier">Async</span>
                         <span ><b>login</b></span>
                         <a href="#login"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -111,15 +161,16 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>login(loginDto: <a href="../classes/LoginDto.html" target="_self">LoginDto</a>)</code>
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>login(loginDto: <a href="../classes/LoginDto.html" target="_self">LoginDto</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="6"
-                            class="link-to-prism">src/routers/login/login.service.ts:6</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="9"
+                            class="link-to-prism">src/routers/login/login.service.ts:9</a></div>
                 </td>
             </tr>
 
@@ -157,7 +208,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>    <code>{ code: number; message: string; }</code>
+                        <b>Returns : </b>    <code>Promise&lt;RuleResType&lt;any&gt;&gt;</code>
 
                     </div>
                     <div class="io-description">
@@ -175,21 +226,64 @@
     <div class="tab-pane fade  tab-source-code" id="c-source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@nestjs/common&#x27;;
 import { LoginDto } from &#x27;./dto/login.dto&#x27;;
+import { RuleResType } from &#x27;src/types/global&#x27;;
+import { AuthService } from &#x27;src/logical/auth/auth.service&#x27;;
 
 @Injectable()
 export class LoginService {
-  login(loginDto: LoginDto) {
-    const { userName, password } &#x3D; loginDto;
-    if (userName &#x3D;&#x3D;&#x3D; &#x27;admin&#x27; &amp;&amp; password &#x3D;&#x3D;&#x3D; &#x27;admin&#x27;) {
+  constructor(private readonly authService: AuthService) {}
+  async login(loginDto: LoginDto): Promise&lt;RuleResType&lt;any&gt;&gt; {
+    const { userName, password, loginType } &#x3D; loginDto;
+    if (loginType &#x3D;&#x3D;&#x3D; &#x27;account&#x27;) {
+      const authResult &#x3D; await this.authService.validateUser(
+        userName,
+        password,
+      );
+      switch (authResult.code) {
+        case 0:
+          const res &#x3D; await this.authService.certificate(authResult?.user);
+          if (authResult?.user?.userName &#x3D;&#x3D;&#x3D; &#x27;admin&#x27;) {
+            return {
+              code: 0,
+              message: &#x27;管理员登录成功&#x27;,
+              data: {
+                token: res?.data?.token,
+                role: &#x27;admin&#x27;,
+                name: &#x27;admin&#x27;,
+              },
+            };
+          }
+          return {
+            code: 0,
+            message: &#x27;登录成功&#x27;,
+            data: {
+              token: res?.data?.token,
+            },
+          };
+        case -2:
+          return {
+            code: -1,
+            message: &#x27;账号或密码不正确&#x27;,
+            data: null,
+          };
+        default:
+          return {
+            code: -1,
+            message: &#x27;账号不存在&#x27;,
+            data: null,
+          };
+      }
+    }
+    if (loginType &#x3D;&#x3D;&#x3D; &#x27;phone&#x27;) {
       return {
         code: 0,
-        message: &#x27;登录成功&#x27;,
+        message: &#x27;管理员登录成功&#x27;,
+        data: {
+          token: &#x27;手机号登录&#x27;,
+          role: &#x27;admin&#x27;,
+        },
       };
     }
-    return {
-      code: -1,
-      message: &#x27;密码错误&#x27;,
-    };
   }
 }
 </code></pre>

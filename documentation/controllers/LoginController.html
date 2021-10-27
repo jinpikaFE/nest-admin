@@ -124,14 +124,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Post()<br /></code>
+                    <code>@UsePipes(new ValidationPipe())<br />@Post()<br />@ApiBody({type: LoginDto})<br /></code>
                 </td>
             </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="10"
-                            class="link-to-prism">src/routers/login/login.controller.ts:10</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="15"
+                            class="link-to-prism">src/routers/login/login.controller.ts:15</a></div>
                 </td>
             </tr>
 
@@ -183,15 +183,20 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Body, Controller, Post } from &#x27;@nestjs/common&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Body, Controller, Post, UsePipes } from &#x27;@nestjs/common&#x27;;
+import { ApiBody, ApiTags } from &#x27;@nestjs/swagger&#x27;;
+import { ValidationPipe } from &#x27;src/pipe/validation.pipe&#x27;;
 import { LoginDto } from &#x27;./dto/login.dto&#x27;;
 import { LoginService } from &#x27;./login.service&#x27;;
 
+@ApiTags(&#x27;login&#x27;)
 @Controller(&#x27;api/login&#x27;)
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
+  @UsePipes(new ValidationPipe())
   @Post()
+  @ApiBody({ type: LoginDto })
   create(@Body() loginDto: LoginDto) {
     return this.loginService.login(loginDto);
   }

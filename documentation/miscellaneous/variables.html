@@ -59,7 +59,19 @@
                 <td class="col-md-4">
                     <ul class="index-list">
                         <li>
+                            <a href="#baseLogPath" title="src/config/log4js.ts" ><b>baseLogPath</b>&nbsp;&nbsp;&nbsp;(src/.../log4js.ts)</a>
+                        </li>
+                        <li>
                             <a href="#databaseProviders" title="src/providers/database/database.providers.ts" ><b>databaseProviders</b>&nbsp;&nbsp;&nbsp;(src/.../database.providers.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#jwtConstants" title="src/logical/auth/constats.ts" ><b>jwtConstants</b>&nbsp;&nbsp;&nbsp;(src/.../constats.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#log4jsConfig" title="src/config/log4js.ts" ><b>log4jsConfig</b>&nbsp;&nbsp;&nbsp;(src/.../log4js.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#logger" title="src/utils/log4js.ts" ><b>logger</b>&nbsp;&nbsp;&nbsp;(src/.../log4js.ts)</a>
                         </li>
                         <li>
                             <a href="#UserSchema" title="src/routers/users/schema/user.schema.ts" ><b>UserSchema</b>&nbsp;&nbsp;&nbsp;(src/.../user.schema.ts)</a>
@@ -74,6 +86,119 @@
     </table>
 </section>
 
+    <h3>src/config/log4js.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="baseLogPath"></a>
+                    <span class="name">
+                        <span ><b>baseLogPath</b></span>
+                        <a href="#baseLogPath"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>path.resolve(__dirname, &#x27;../../logs&#x27;)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="log4jsConfig"></a>
+                    <span class="name">
+                        <span ><b>log4jsConfig</b></span>
+                        <a href="#log4jsConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  appenders: {
+    console: {
+      type: &#x27;console&#x27;, // 会打印到控制台
+    },
+    access: {
+      type: &#x27;dateFile&#x27;, // 会写入文件，并按照日期分类
+      filename: &#x60;${baseLogPath}/access/access.log&#x60;, // 日志文件名，会命名为：access.20200320.log
+      alwaysIncludePattern: true,
+      pattern: &#x27;yyyyMMdd&#x27;,
+      daysToKeep: 60,
+      numBackups: 3,
+      category: &#x27;http&#x27;,
+      keepFileExt: true, // 是否保留文件后缀
+    },
+    app: {
+      type: &#x27;dateFile&#x27;,
+      filename: &#x60;${baseLogPath}/app-out/app.log&#x60;,
+      alwaysIncludePattern: true,
+      layout: {
+        type: &#x27;pattern&#x27;,
+        pattern:
+          &#x27;{&quot;date&quot;:&quot;%d&quot;,&quot;level&quot;:&quot;%p&quot;,&quot;category&quot;:&quot;%c&quot;,&quot;host&quot;:&quot;%h&quot;,&quot;pid&quot;:&quot;%z&quot;,&quot;data&quot;:\&#x27;%m\&#x27;}&#x27;,
+      },
+      // 日志文件按日期（天）切割
+      pattern: &#x27;yyyyMMdd&#x27;,
+      daysToKeep: 60,
+      // maxLogSize: 10485760,
+      numBackups: 3,
+      keepFileExt: true,
+    },
+    errorFile: {
+      type: &#x27;dateFile&#x27;,
+      filename: &#x60;${baseLogPath}/errors/error.log&#x60;,
+      alwaysIncludePattern: true,
+      layout: {
+        type: &#x27;pattern&#x27;,
+        pattern:
+          &#x27;{&quot;date&quot;:&quot;%d&quot;,&quot;level&quot;:&quot;%p&quot;,&quot;category&quot;:&quot;%c&quot;,&quot;host&quot;:&quot;%h&quot;,&quot;pid&quot;:&quot;%z&quot;,&quot;data&quot;:\&#x27;%m\&#x27;}&#x27;,
+      },
+      // 日志文件按日期（天）切割
+      pattern: &#x27;yyyyMMdd&#x27;,
+      daysToKeep: 60,
+      // maxLogSize: 10485760,
+      numBackups: 3,
+      keepFileExt: true,
+    },
+    errors: {
+      type: &#x27;logLevelFilter&#x27;,
+      level: &#x27;ERROR&#x27;,
+      appender: &#x27;errorFile&#x27;,
+    },
+  },
+  categories: {
+    default: {
+      appenders: [&#x27;app&#x27;, &#x27;errors&#x27;],
+      level: &#x27;DEBUG&#x27;,
+    },
+    info: { appenders: [&#x27;app&#x27;, &#x27;errors&#x27;], level: &#x27;info&#x27; },
+    access: { appenders: [&#x27;app&#x27;, &#x27;errors&#x27;], level: &#x27;info&#x27; },
+    http: { appenders: [&#x27;access&#x27;], level: &#x27;DEBUG&#x27; },
+  },
+  pm2: true, // 使用 pm2 来管理项目时，打开
+  pm2InstanceVar: &#x27;INSTANCE_ID&#x27;, // 会根据 pm2 分配的 id 进行区分，以免各进程在写日志时造成冲突
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>src/providers/database/database.providers.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -109,6 +234,60 @@
         </tbody>
     </table>
 </section>
+    <h3>src/logical/auth/constats.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="jwtConstants"></a>
+                    <span class="name">
+                        <span ><b>jwtConstants</b></span>
+                        <a href="#jwtConstants"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  secret: &#x27;jinpika0517&#x27;, // 秘钥
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/utils/log4js.ts</h3>
+    <section>
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>Log4js.getLogger()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>src/routers/users/schema/user.schema.ts</h3>
     <section>
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -131,6 +310,10 @@
     unique: true,
   },
   password: {
+    type: String,
+    required: true,
+  },
+  salt: {
     type: String,
     required: true,
   },

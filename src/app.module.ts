@@ -6,6 +6,8 @@ import { AllExceptionsFilter } from './filter/all-exceptions.filter';
 import { AuthModule } from './logical/auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MenuModule } from './routers/menu/menu.module';
+import { RolesModule } from './routers/roles/roles.module';
 
 @Module({
   imports: [
@@ -14,7 +16,18 @@ import { join } from 'path';
     AuthModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'documentation'),
+      serveRoot: '/doc',
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'src/assets'),
+      serveRoot: '/asset',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'web'),
+      serveRoot: '',
+    }),
+    MenuModule,
+    RolesModule,
   ],
   providers: [
     {

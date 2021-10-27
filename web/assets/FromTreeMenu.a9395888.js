@@ -1,0 +1,1 @@
+import{h as a}from"./untils.fef0d0c5.js";const s=async s=>a("/api/menu",{method:"POST",data:s}),m=async s=>a(`/api/menu/${s}`,{method:"DELETE"}),n=async(s,m)=>a(`/api/menu/${s}`,{method:"PATCH",data:m}),t=async s=>a("/api/menu/many",{method:"POST",data:s});export{t as a,s as c,m as d,n as u};

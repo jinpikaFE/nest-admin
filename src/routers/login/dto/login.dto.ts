@@ -6,7 +6,12 @@ export class LoginDto {
   @IsNotEmpty({ message: '用户名不能为空' })
   @ApiProperty({ uniqueItems: true })
   userName: string;
+
   @IsNotEmpty({ message: '密码不能为空' })
   @ApiProperty()
   password: string;
+
+  @IsNotEmpty({ message: '登录类型不能为空' })
+  @ApiProperty()
+  loginType: 'phone' | 'account';
 }

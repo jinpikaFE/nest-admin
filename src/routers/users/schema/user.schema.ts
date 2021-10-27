@@ -6,6 +6,21 @@ export const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  role: {
+    type: String,
+    required: true,
+  },
+  avatar: mongoose.Schema.Types.Mixed,
   password: {
     type: String,
     required: true,

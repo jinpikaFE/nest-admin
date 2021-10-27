@@ -117,7 +117,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/routers/users/users.service.ts:9</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/routers/users/users.service.ts:10</a></div>
                             </td>
                         </tr>
 
@@ -182,8 +182,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="15"
-                            class="link-to-prism">src/routers/users/users.service.ts:15</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="16"
+                            class="link-to-prism">src/routers/users/users.service.ts:16</a></div>
                 </td>
             </tr>
 
@@ -253,8 +253,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="20"
-                            class="link-to-prism">src/routers/users/users.service.ts:20</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="28"
+                            class="link-to-prism">src/routers/users/users.service.ts:28</a></div>
                 </td>
             </tr>
 
@@ -290,8 +290,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="25"
-                            class="link-to-prism">src/routers/users/users.service.ts:25</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">src/routers/users/users.service.ts:33</a></div>
                 </td>
             </tr>
 
@@ -359,8 +359,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="33"
-                            class="link-to-prism">src/routers/users/users.service.ts:33</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="41"
+                            class="link-to-prism">src/routers/users/users.service.ts:41</a></div>
                 </td>
             </tr>
 
@@ -428,8 +428,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="29"
-                            class="link-to-prism">src/routers/users/users.service.ts:29</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="37"
+                            class="link-to-prism">src/routers/users/users.service.ts:37</a></div>
                 </td>
             </tr>
 
@@ -498,6 +498,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Inject, Injectable } from &#x27;@nestjs/common&#x27;;
 import { Model } from &#x27;mongoose&#x27;;
 import { RuleResType } from &#x27;src/types/global&#x27;;
+import { encryptPassword, makeSalt } from &#x27;src/utils/cryptogram&#x27;;
 import { CreateUserDto } from &#x27;./dto/create-user.dto&#x27;;
 import { UpdateUserDto } from &#x27;./dto/update-user.dto&#x27;;
 import { IUser } from &#x27;./interface/user&#x27;;
@@ -510,7 +511,14 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise&lt;RuleResType&lt;any&gt;&gt; {
-    const data &#x3D; await this.userModel.create(createUserDto);
+    const { userName, password } &#x3D; createUserDto;
+    const salt &#x3D; makeSalt(); // 制作密码盐
+    const hashPwd &#x3D; encryptPassword(password, salt); // 加密密码
+    const data &#x3D; await this.userModel.create({
+      userName,
+      password: hashPwd,
+      salt,
+    });
     return { code: 0, message: &#x27;创建成功&#x27;, data };
   }
 

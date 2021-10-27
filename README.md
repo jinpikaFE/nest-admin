@@ -36,7 +36,13 @@
 
 [项目文档实例](http://nestadmin.jinxinapp.cn/documentation)
 
-[swagger实例](http://nestadmin.jinxinapp.cn/docs/)
+[项目文档实例](http://nestadmin.jinxinapp.cn/docs/)
+
+[项目文档实例-详细](http://nestadmin_dt.jinxinapp.cn/doc)
+
+[swagger实例-详细](http://nestadmin_dt.jinxinapp.cn/docs/)
+
+[前端示例](http://nestadmin_dt.jinxinapp.cn/login)
 
 ## 主要功能
 

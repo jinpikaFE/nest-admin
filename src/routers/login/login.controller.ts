@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { ValidationPipe } from 'src/pipe/validation.pipe';
+import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { LoginDto } from './dto/login.dto';
 import { LoginService } from './login.service';
 
@@ -9,7 +9,7 @@ import { LoginService } from './login.service';
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new MyValidationPipe())
   @Post()
   @ApiBody({ type: LoginDto })
   create(@Body() loginDto: LoginDto) {
