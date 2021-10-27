@@ -119,7 +119,7 @@ export class UsersService {
         }
         base64ToFile(
           avatar,
-          path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+          path.join(__dirname, '../../../', `src/asset/${fileName}.png`),
         );
         return true;
       };
@@ -131,9 +131,12 @@ export class UsersService {
               uid: fileName,
               name: `${fileName}.png`,
               status: 'done',
-              url: `${request.protocol}://${request?.get(
-                'host',
-              )}/asset/${fileName}.png`,
+              url:
+                request?.get('host') === '127.0.0.1'
+                  ? `${request.protocol}://${request?.get(
+                      'host',
+                    )}/asset/${fileName}.png`
+                  : `http://nestadmin_dt.jinxinapp.cn/asset/${fileName}.png`,
             },
           ]
         : '';
