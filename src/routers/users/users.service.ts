@@ -132,7 +132,7 @@ export class UsersService {
               name: `${fileName}.png`,
               status: 'done',
               url:
-                request?.get('host') === '127.0.0.1'
+                request?.get('host') !== '127.0.0.1'
                   ? `${request.protocol}://${request?.get(
                       'host',
                     )}/asset/${fileName}.png`
