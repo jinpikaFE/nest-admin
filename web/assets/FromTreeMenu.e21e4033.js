@@ -1,1 +1,0 @@
-import{h as a}from"./request.74cb37a7.js";const s=async s=>a("/api/menu",{method:"POST",data:s}),e=async s=>a(`/api/menu/${s}`,{method:"DELETE"}),m=async(s,e)=>a(`/api/menu/${s}`,{method:"PATCH",data:e}),t=async s=>a("/api/menu/many",{method:"POST",data:s});export{t as a,s as c,e as d,m as u};
