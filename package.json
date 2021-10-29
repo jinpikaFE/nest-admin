@@ -27,15 +27,18 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/mapped-types": "*",
+    "@nestjs/mongoose": "^9.0.1",
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/serve-static": "^2.2.2",
     "@nestjs/swagger": "^5.0.9",
+    "@nestjs/typeorm": "^8.0.2",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
     "mongoose": "^6.0.8",
+    "mysql": "^2.18.1",
     "passport": "^0.5.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -43,7 +46,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "stacktrace-js": "^2.0.2",
-    "swagger-ui-express": "^4.1.6"
+    "swagger-ui-express": "^4.1.6",
+    "typeorm": "^0.2.38"
   },
   "devDependencies": {
     "@compodoc/compodoc": "^1.1.15",
