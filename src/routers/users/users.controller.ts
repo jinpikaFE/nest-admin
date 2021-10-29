@@ -33,8 +33,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll(@Query() Query) {
-    return this.usersService.findAll(Query);
+  findAll(@Query() query) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

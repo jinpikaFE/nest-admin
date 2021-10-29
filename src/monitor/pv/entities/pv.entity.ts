@@ -5,6 +5,9 @@ export class Pv {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ enum: ['admin', 'blog'] })
+  type: 'admin' | 'blog';
+
   @Column()
   uid: string;
 

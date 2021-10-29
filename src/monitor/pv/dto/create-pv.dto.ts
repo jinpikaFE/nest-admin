@@ -1,7 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreatePvDto {
+  @IsEnum(['admin', 'blog'])
+  @IsNotEmpty({ message: 'type不能为空' })
+  @ApiProperty()
+  readonly type: 'admin' | 'blog';
+
   @IsString({ message: 'uid必须是 String 类型' })
   @IsNotEmpty({ message: 'uid不能为空' })
   @ApiProperty()

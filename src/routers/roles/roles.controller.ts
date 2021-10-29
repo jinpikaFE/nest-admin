@@ -31,8 +31,8 @@ export class RolesController {
   }
 
   @Get()
-  filterQuery(@Query() Query) {
-    return this.rolesService.filterQuery(Query);
+  filterQuery(@Query() query) {
+    return this.rolesService.filterQuery(query);
   }
 
   @Get('/all')

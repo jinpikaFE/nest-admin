@@ -12,13 +12,14 @@ export class PvService {
   ) {}
 
   async create(createUvDto: Pv): Promise<RuleResType<any>> {
-    const { uid, ip, pathname, startTime, durationVisit } = createUvDto;
+    const { uid, ip, pathname, startTime, durationVisit, type } = createUvDto;
     const data = await this.pvRepository.save({
       uid,
       ip,
       startTime,
       durationVisit,
       pathname,
+      type,
     });
     if (data) {
       return { code: 0, message: '创建成功', data };
@@ -26,7 +27,8 @@ export class PvService {
     return { code: -1, message: '创建失败', data };
   }
 
-  findAll(): Promise<Pv[]> {
-    return this.pvRepository.find();
+  async findAll(): Promise<RuleResType<Pv[]>> {
+    const data = await this.pvRepository.find();
+    return { code: 0, message: '查询成功', data };
   }
 }

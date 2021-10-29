@@ -13,7 +13,8 @@ export class UvService {
   ) {}
 
   async create(createUvDto: Uv): Promise<RuleResType<any>> {
-    const { uid, ip, address, startTime, endTime, durationVisit } = createUvDto;
+    const { uid, ip, address, startTime, endTime, durationVisit, type } =
+      createUvDto;
     const data = await this.uvRepository.save({
       uid,
       ip,
@@ -21,6 +22,7 @@ export class UvService {
       startTime,
       endTime,
       durationVisit,
+      type,
     });
     if (data) {
       return { code: 0, message: '创建成功', data };
@@ -28,8 +30,9 @@ export class UvService {
     return { code: -1, message: '创建失败', data };
   }
 
-  findAll(): Promise<Uv[]> {
-    return this.uvRepository.find();
+  async findAll(): Promise<RuleResType<Uv[]>> {
+    const data = await this.uvRepository.find();
+    return { code: 0, message: '查询成功', data };
   }
 
   findOne(id: string): Promise<Uv> {
