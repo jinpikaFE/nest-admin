@@ -21,4 +21,9 @@ export class UvController {
   findAll() {
     return this.uvService.findAll();
   }
+
+  @Get('/maps')
+  findMaps() {
+    return this.uvService.findMaps();
+  }
 }
