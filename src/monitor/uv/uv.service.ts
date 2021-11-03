@@ -14,15 +14,19 @@ export class UvService {
   async create(createUvDto: Uv): Promise<RuleResType<any>> {
     const { uid, ip, address, startTime, endTime, durationVisit, type } =
       createUvDto;
-    const data = await this.uvRepository.save({
-      uid,
-      ip,
-      address,
-      startTime,
-      endTime,
-      durationVisit,
-      type,
-    });
+    let data;
+    const findRes = await this.uvRepository.find({ where: { uid } });
+    if (!(findRes.length > 0)) {
+      data = await this.uvRepository.save({
+        uid,
+        ip,
+        address,
+        startTime,
+        endTime,
+        durationVisit,
+        type,
+      });
+    }
     if (data) {
       return { code: 0, message: '创建成功', data };
     }

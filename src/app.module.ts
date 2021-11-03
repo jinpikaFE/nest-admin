@@ -36,7 +36,7 @@ import { PvModule } from './monitor/pv/pv.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'q847164495',
+      password: '123',
       database: 'nest_admin',
       synchronize: true,
       autoLoadEntities: true,
