@@ -37,7 +37,7 @@ console.log(process.env.NODE_ENV);
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: process.env.NODE_ENV === 'production' ? 'q847164495' : '123',
+      password: process.env.NODE_ENV === 'production' ? 'q847164495' : 'q847164495',
       database: 'nest_admin',
       synchronize: true,
       autoLoadEntities: true,
