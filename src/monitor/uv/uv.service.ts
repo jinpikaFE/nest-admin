@@ -26,6 +26,8 @@ export class UvService {
         durationVisit,
         type,
       });
+    } else {
+      return { code: 0, message: 'cookie未过期不记录uv', data };
     }
     if (data) {
       return { code: 0, message: '创建成功', data };
