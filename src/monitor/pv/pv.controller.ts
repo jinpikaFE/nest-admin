@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
+import { EntityManager, Transaction, TransactionManager } from 'typeorm';
 import { CreatePvDto } from './dto/create-pv.dto';
 import { Pv } from './entities/pv.entity';
 import { PvService } from './pv.service';
@@ -20,5 +21,11 @@ export class PvController {
   @Get('/all')
   findAll() {
     return this.pvService.findAll();
+  }
+
+  @Get('/statistics')
+  @Transaction()
+  findAndsSatistics(@TransactionManager() manager: EntityManager) {
+    return this.pvService.findAndsSatistics(manager);
   }
 }

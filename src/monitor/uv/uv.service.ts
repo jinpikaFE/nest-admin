@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Uv } from './entities/uv.entity';
 
 @Injectable()
@@ -90,5 +90,20 @@ export class UvService {
 
   findOne(id: string): Promise<Uv> {
     return this.uvRepository.findOne(id);
+  }
+
+  async findAndsSatistics(manager: EntityManager): Promise<RuleResType<any>> {
+    const uvTotal = await manager.count(Uv);
+    const uvAverageTime = await manager.query(
+      'SELECT AVG(durationVisit) as uvAverageTime FROM uv',
+    );
+    return {
+      code: 0,
+      message: '查询成功',
+      data: {
+        uvTotal,
+        uvAverageTime: uvAverageTime?.[0].uvAverageTime,
+      },
+    };
   }
 }

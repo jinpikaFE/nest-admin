@@ -11,7 +11,6 @@ import { RolesModule } from './routers/roles/roles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UvModule } from './monitor/uv/uv.module';
 import { PvModule } from './monitor/pv/pv.module';
-console.log(process.env.NODE_ENV);
 
 @Module({
   imports: [
