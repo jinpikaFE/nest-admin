@@ -28,6 +28,8 @@
 
 ## Description
 
+分支1.0版本为通用的模版，可进行clone直接使用
+
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 [掘金参考文章](https://juejin.cn/column/6960949607794737159)
