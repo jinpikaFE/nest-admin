@@ -10,6 +10,7 @@ import {
   UsePipes,
   Req,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -18,6 +19,7 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { Request } from 'express';
+import { RbacInterceptor } from 'src/interceptor/rbac.interceptor';
 
 @ApiTags('users')
 @UseGuards(AuthGuard('jwt'))
@@ -27,6 +29,7 @@ export class UsersController {
 
   @UsePipes(new MyValidationPipe())
   @Post()
+  // @UseInterceptors(new RbacInterceptor(['admin']))
   @ApiBody({ type: CreateUserDto })
   create(@Body() createUserDto: CreateUserDto, @Req() request: Request) {
     return this.usersService.create(createUserDto, request);
@@ -44,6 +47,7 @@ export class UsersController {
 
   @UsePipes(new MyValidationPipe())
   @Patch(':id')
+  @UseInterceptors(new RbacInterceptor(['admin']))
   @ApiBody({ type: UpdateUserDto })
   update(
     @Param('id') id: string,
@@ -54,6 +58,7 @@ export class UsersController {
   }
 
   @Delete(':id/:fileName')
+  @UseInterceptors(new RbacInterceptor(['admin']))
   remove(@Param('id') id: string, @Param('fileName') fileName: string) {
     return this.usersService.remove(id, fileName);
   }

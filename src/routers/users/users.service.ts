@@ -21,6 +21,13 @@ export class UsersService {
     request: Request,
   ): Promise<RuleResType<any>> {
     const { userName, password, email, phone, role, avatar } = createUserDto;
+    if (userName === 'admin') {
+      return {
+        code: -1,
+        message: '创建失败，不能使用admin为用户名',
+        data: null,
+      };
+    }
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
     const fileName = `avatar_${new Date().getTime()}`;
