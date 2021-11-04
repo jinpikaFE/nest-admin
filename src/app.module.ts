@@ -8,6 +8,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MenuModule } from './routers/menu/menu.module';
 import { RolesModule } from './routers/roles/roles.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UvModule } from './monitor/uv/uv.module';
+import { PvModule } from './monitor/pv/pv.module';
 
 @Module({
   imports: [
@@ -19,7 +22,7 @@ import { RolesModule } from './routers/roles/roles.module';
       serveRoot: '/doc',
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'src/assets'),
+      rootPath: join(__dirname, '..', 'src/asset'),
       serveRoot: '/asset',
     }),
     ServeStaticModule.forRoot({
@@ -28,6 +31,19 @@ import { RolesModule } from './routers/roles/roles.module';
     }),
     MenuModule,
     RolesModule,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password:
+        process.env.NODE_ENV === 'production' ? 'q847164495' : 'q847164495',
+      database: 'nest_admin',
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
+    UvModule,
+    PvModule,
   ],
   providers: [
     {
