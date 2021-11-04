@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { EntityManager, Transaction, TransactionManager } from 'typeorm';
@@ -25,7 +25,10 @@ export class PvController {
 
   @Get('/statistics')
   @Transaction()
-  findAndsSatistics(@TransactionManager() manager: EntityManager) {
-    return this.pvService.findAndsSatistics(manager);
+  findAndsSatistics(
+    @Query() query,
+    @TransactionManager() manager: EntityManager,
+  ) {
+    return this.pvService.findAndsSatistics(manager, query);
   }
 }

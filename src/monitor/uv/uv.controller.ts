@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UsePipes,
+} from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { EntityManager, Transaction, TransactionManager } from 'typeorm';
@@ -23,14 +31,17 @@ export class UvController {
     return this.uvService.findAll();
   }
 
-  @Get('/maps')
-  findMaps() {
-    return this.uvService.findMaps();
+  @Get('/maps/:type')
+  findMaps(@Param('type') type: string) {
+    return this.uvService.findMaps(type);
   }
 
   @Get('/statistics')
   @Transaction()
-  findAndsSatistics(@TransactionManager() manager: EntityManager) {
-    return this.uvService.findAndsSatistics(manager);
+  findAndsSatistics(
+    @Query() query,
+    @TransactionManager() manager: EntityManager,
+  ) {
+    return this.uvService.findAndsSatistics(manager, query);
   }
 }

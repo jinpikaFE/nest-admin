@@ -39,36 +39,42 @@ export class PvService {
     return { code: 0, message: '查询成功', data };
   }
 
-  async findAndsSatistics(pvManager: EntityManager): Promise<RuleResType<any>> {
-    const pvTotal = await pvManager.count(Pv);
+  async findAndsSatistics(
+    pvManager: EntityManager,
+    query: { type: string },
+  ): Promise<RuleResType<any>> {
+    const { type } = query;
+    let totalObj: any = {};
+    let querySql =
+      'SELECT DATE(startTime) AS date,COUNT(*) num FROM pv GROUP BY date';
+    if (type !== 'all') {
+      totalObj = query;
+      querySql = `SELECT DATE(startTime) AS date,COUNT(*) num FROM pv WHERE type='${type}' GROUP BY date`;
+    }
+    const pvTotal = await pvManager.count(Pv, totalObj);
 
     const pvThisYear = await pvManager.count(Pv, {
       startTime: Between(getFirstDayOfYear(new Date()), getEndYear(new Date())),
+      ...totalObj,
     });
-    console.log(
-      getFirstDayOfYear(new Date()),
-      getEndYear(new Date()),
-      getFirstDayOfMonth(new Date()),
-      getCurrentMonthLast(new Date()),
-      getLast(new Date()),
-      getLast(new Date(), false),
-    );
 
     const pvThisMonth = await pvManager.count(Pv, {
       startTime: Between(
         getFirstDayOfMonth(new Date()),
         getCurrentMonthLast(new Date()),
       ),
+      ...totalObj,
     });
     const pvLastDay = await pvManager.count(Pv, {
       startTime: Between(getLast(new Date()), getLast(new Date(), false)),
+      ...totalObj,
     });
 
     const pvPeak = await pvManager.query(
       `SELECT
         MAX(a.num) AS pvPeak
       FROM
-        (SELECT DATE(startTime) AS date,COUNT(*) num FROM pv GROUP BY date) a
+        (${querySql}) a
       `,
     );
 

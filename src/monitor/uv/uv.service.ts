@@ -40,7 +40,9 @@ export class UvService {
     return { code: 0, message: '查询成功', data };
   }
 
-  async findMaps(): Promise<RuleResType<{ name: string; value: number }[]>> {
+  async findMaps(
+    type: string,
+  ): Promise<RuleResType<{ name: string; value: number }[]>> {
     const province = {
       北京市: [116.405289, 39.904987],
       澳门特别行政区: [113.54913, 22.19875],
@@ -78,11 +80,15 @@ export class UvService {
     };
     const arr = Object.keys(province);
     const data = [];
+    let extraObj = {};
+    if (type !== 'all') {
+      extraObj = { type };
+    }
     for (let index = 0; index < arr.length; index++) {
       const item = arr[index];
       data.push({
         name: item,
-        value: await this.uvRepository.count({ address: item }),
+        value: await this.uvRepository.count({ address: item, ...extraObj }),
       });
     }
     return { code: 0, message: '查询成功', data };
@@ -92,11 +98,20 @@ export class UvService {
     return this.uvRepository.findOne(id);
   }
 
-  async findAndsSatistics(manager: EntityManager): Promise<RuleResType<any>> {
-    const uvTotal = await manager.count(Uv);
-    const uvAverageTime = await manager.query(
-      'SELECT AVG(durationVisit) as uvAverageTime FROM uv',
-    );
+  async findAndsSatistics(
+    manager: EntityManager,
+    query: { type: string },
+  ): Promise<RuleResType<any>> {
+    const { type } = query;
+
+    let totalObj: any = {};
+    let querySql = 'SELECT AVG(durationVisit) as uvAverageTime FROM uv';
+    if (type !== 'all') {
+      totalObj = query;
+      querySql = `SELECT AVG(durationVisit) as uvAverageTime FROM uv WHERE type='${type}'`;
+    }
+    const uvTotal = await manager.count(Uv, totalObj);
+    const uvAverageTime = await manager.query(querySql);
     return {
       code: 0,
       message: '查询成功',
