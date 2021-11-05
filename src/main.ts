@@ -13,6 +13,7 @@ async function bootstrap() {
   app.use(express.json({ limit: '50mb' })); // For parsing application/json
   app.use(express.urlencoded({ extended: true, limit: '50mb' })); // For parsing application/x-www-form-urlencoded
   app.use(logger);
+  app.enableCors();
 
   // 使用全局拦截器打印出参
   app.useGlobalInterceptors(new TransformInterceptor());
