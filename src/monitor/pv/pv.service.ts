@@ -8,7 +8,7 @@ import {
   getFirstDayOfYear,
   getLast,
 } from 'src/utils';
-import { Between, EntityManager, Repository } from 'typeorm';
+import { Between, EntityManager, Like, Repository } from 'typeorm';
 import { Pv } from './entities/pv.entity';
 
 @Injectable()
@@ -34,9 +34,52 @@ export class PvService {
     return { code: -1, message: '创建失败', data };
   }
 
-  async findAll(): Promise<RuleResType<Pv[]>> {
-    const data = await this.pvRepository.find();
-    return { code: 0, message: '查询成功', data };
+  async findAll(params): Promise<RuleResType<Pv[]>> {
+    const {
+      current,
+      pageSize,
+      startTime,
+      pathname,
+      type,
+      startSearchTime,
+      endSearchTime,
+      durationVisit,
+    } = params;
+    let data = this.pvRepository.createQueryBuilder('uv');
+    data = data.where({});
+    if (type && type !== 'all') {
+      data = data.andWhere({ type });
+    }
+    if (pathname) {
+      data = data.andWhere({ pathname: Like(`%${pathname}%`) });
+    }
+    if (startSearchTime && endSearchTime) {
+      data = data.andWhere('startTime BETWEEN :start AND :end', {
+        start: startSearchTime,
+        end: endSearchTime,
+      });
+    }
+    if (startTime) {
+      data = data.orderBy(
+        'startTime',
+        startTime === 'descend' ? 'DESC' : 'ASC',
+      );
+    }
+    if (durationVisit) {
+      data = data.orderBy(
+        'durationVisit',
+        durationVisit === 'descend' ? 'DESC' : 'ASC',
+      );
+    }
+    data = data
+      .skip((Number(current) - 1) * Number(pageSize))
+      .take(Number(pageSize));
+    return {
+      code: 0,
+      message: '查询成功',
+      data: await data.getMany(),
+      total: await data.getCount(),
+    };
   }
 
   async findAndsSatistics(

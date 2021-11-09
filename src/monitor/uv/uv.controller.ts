@@ -27,8 +27,8 @@ export class UvController {
   }
 
   @Get('/all')
-  findAll() {
-    return this.uvService.findAll();
+  findAll(@Query() query) {
+    return this.uvService.findAll(query);
   }
 
   @Get('/maps/:type')

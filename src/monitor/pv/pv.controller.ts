@@ -19,8 +19,8 @@ export class PvController {
   }
 
   @Get('/all')
-  findAll() {
-    return this.pvService.findAll();
+  findAll(@Query() query) {
+    return this.pvService.findAll(query);
   }
 
   @Get('/statistics')
