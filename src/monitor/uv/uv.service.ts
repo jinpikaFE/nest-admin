@@ -45,6 +45,7 @@ export class UvService {
       startSearchTime,
       endSearchTime,
       durationVisit,
+      uid,
     } = params;
     let data = this.uvRepository.createQueryBuilder('uv');
     data = data.where({});
@@ -53,6 +54,9 @@ export class UvService {
     }
     if (address) {
       data = data.andWhere({ address: Like(`%${address}%`) });
+    }
+    if (uid) {
+      data = data.andWhere({ uid: Like(`%${uid}%`) });
     }
     if (startSearchTime && endSearchTime) {
       data = data.andWhere('startTime BETWEEN :start AND :end', {

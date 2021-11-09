@@ -44,6 +44,7 @@ export class PvService {
       startSearchTime,
       endSearchTime,
       durationVisit,
+      uid,
     } = params;
     let data = this.pvRepository.createQueryBuilder('uv');
     data = data.where({});
@@ -52,6 +53,9 @@ export class PvService {
     }
     if (pathname) {
       data = data.andWhere({ pathname: Like(`%${pathname}%`) });
+    }
+    if (uid) {
+      data = data.andWhere({ uid: Like(`%${uid}%`) });
     }
     if (startSearchTime && endSearchTime) {
       data = data.andWhere('startTime BETWEEN :start AND :end', {
