@@ -12,8 +12,16 @@ export class UvService {
   ) {}
 
   async create(createUvDto: Uv): Promise<RuleResType<any>> {
-    const { uid, ip, address, startTime, endTime, durationVisit, type } =
-      createUvDto;
+    const {
+      uid,
+      ip,
+      address,
+      startTime,
+      endTime,
+      durationVisit,
+      type,
+      userName,
+    } = createUvDto;
     let data;
     const findRes = await this.uvRepository.find({ where: { uid } });
     if (!(findRes.length > 0)) {
@@ -25,6 +33,7 @@ export class UvService {
         endTime,
         durationVisit,
         type,
+        userName,
       });
     } else {
       return { code: 0, message: 'cookie未过期不记录uv', data };
@@ -46,6 +55,7 @@ export class UvService {
       endSearchTime,
       durationVisit,
       uid,
+      userName,
     } = params;
     let data = this.uvRepository.createQueryBuilder('uv');
     data = data.where({});
@@ -57,6 +67,9 @@ export class UvService {
     }
     if (uid) {
       data = data.andWhere({ uid: Like(`%${uid}%`) });
+    }
+    if (userName) {
+      data = data.andWhere({ userName: Like(`%${userName}%`) });
     }
     if (startSearchTime && endSearchTime) {
       data = data.andWhere('startTime BETWEEN :start AND :end', {

@@ -25,4 +25,7 @@ export class Uv {
 
   @Column()
   durationVisit: number;
+
+  @Column()
+  userName?: string;
 }
