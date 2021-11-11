@@ -56,7 +56,7 @@ export class UvService {
         })
         .where({ uid })
         .execute();
-      return { code: 0, message: 'cookie未过期不记录uv', data };
+      return { code: 0, message: 'uv更新', data };
     }
     if (data) {
       return { code: 0, message: '创建成功', data };
