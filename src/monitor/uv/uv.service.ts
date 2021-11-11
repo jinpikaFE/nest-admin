@@ -15,7 +15,9 @@ export class UvService {
     const { uid, ip, address, startTime, endTime, durationVisit, type } =
       createUvDto;
     let data;
-    const findRes = await this.uvRepository.find({ where: { uid } });
+    const findRes = await this.uvRepository.find({
+      where: { uid: uid.includes('/') ? uid.split('/')[0] : uid },
+    });
     if (!(findRes.length > 0)) {
       data = await this.uvRepository.save({
         uid,
