@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
 import { Between, EntityManager, Like, Repository } from 'typeorm';
+import { Pv } from '../pv/entities/pv.entity';
 import { Uv } from './entities/uv.entity';
 
 @Injectable()
@@ -9,6 +10,8 @@ export class UvService {
   constructor(
     @InjectRepository(Uv)
     private uvRepository: Repository<Uv>,
+    @InjectRepository(Pv)
+    private pvRepository: Repository<Pv>,
   ) {}
 
   async create(createUvDto: Uv): Promise<RuleResType<any>> {
@@ -23,6 +26,10 @@ export class UvService {
       userName,
     } = createUvDto;
     let data;
+    const totalDurationVisit = await this.pvRepository.query(
+      `SELECT SUM(durationVisit) totalDurationVisit FROM pv WHERE uid='${uid}'`,
+    );
+
     const findRes = await this.uvRepository.find({ where: { uid } });
     if (!(findRes.length > 0)) {
       data = await this.uvRepository.save({
@@ -31,11 +38,24 @@ export class UvService {
         address,
         startTime,
         endTime,
-        durationVisit,
+        durationVisit: totalDurationVisit?.[0].totalDurationVisit
+          ? Number(totalDurationVisit?.[0].totalDurationVisit)
+          : durationVisit,
         type,
         userName,
       });
     } else {
+      data = await this.uvRepository
+        .createQueryBuilder()
+        .update(Uv)
+        .set({
+          endTime,
+          durationVisit: totalDurationVisit?.[0].totalDurationVisit
+            ? Number(totalDurationVisit?.[0].totalDurationVisit)
+            : durationVisit,
+        })
+        .where({ uid })
+        .execute();
       return { code: 0, message: 'cookie未过期不记录uv', data };
     }
     if (data) {
