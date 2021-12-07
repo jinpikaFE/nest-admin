@@ -11,6 +11,7 @@ import { RolesModule } from './routers/roles/roles.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UvModule } from './monitor/uv/uv.module';
 import { PvModule } from './monitor/pv/pv.module';
+import { BillModule } from './routers/bill/bill.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { PvModule } from './monitor/pv/pv.module';
     }),
     UvModule,
     PvModule,
+    BillModule,
   ],
   providers: [
     {
