@@ -34,11 +34,13 @@ export class BillService {
         $gte: new Date(startTime),
         $lte: new Date(endTime),
       });
-    const dataQuery = this.billModel.find(findObj);
-    const data = await dataQuery
-      .skip((Number(current) - 1) * Number(pageSize))
-      .limit(Number(pageSize))
-      .sort({ date: date === 'ascend' ? 1 : -1 });
+    let dataQuery = this.billModel.find(findObj);
+    if (current && pageSize) {
+      dataQuery = dataQuery
+        .skip((Number(current) - 1) * Number(pageSize))
+        .limit(Number(pageSize));
+    }
+    const data = await dataQuery.sort({ date: date === 'ascend' ? 1 : -1 });
     const total = await this.billModel.find(findObj).count();
     return { code: 0, message: '查询成功', data, total };
   }
