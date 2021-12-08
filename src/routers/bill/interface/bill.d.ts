@@ -7,6 +7,6 @@ export interface IExRecord {
 
 export interface IBill extends Document {
   readonly date: Date;
-  readonly exRecords: IExRecord[];
-  readonly totalConsume: number;
+  exRecords: IExRecord[];
+  totalConsume: number;
 }

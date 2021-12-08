@@ -26,7 +26,7 @@ export class BillService {
   }
 
   async filterQuery(params): Promise<RuleResType<any>> {
-    const { current, pageSize, date, startTime, endTime } = params;
+    const { current, pageSize, date, startTime, endTime, type } = params;
     const findObj: any = {};
     startTime &&
       endTime &&
@@ -34,14 +34,30 @@ export class BillService {
         $gte: new Date(startTime),
         $lte: new Date(endTime),
       });
+    // 包含指定type的项
+    type && (findObj.exRecords = { $elemMatch: { type: type } });
     let dataQuery = this.billModel.find(findObj);
     if (current && pageSize) {
       dataQuery = dataQuery
         .skip((Number(current) - 1) * Number(pageSize))
         .limit(Number(pageSize));
     }
-    const data = await dataQuery.sort({ date: date === 'ascend' ? 1 : -1 });
+    let data = await dataQuery.sort({ date: date === 'ascend' ? 1 : -1 });
     const total = await this.billModel.find(findObj).count();
+    // 对项进行处理只保留type
+    if (type) {
+      data = data.map((item) => {
+        let total = 0;
+        item.exRecords = item?.exRecords.filter((c_item) => {
+          if (c_item?.type === type) {
+            total += c_item.value;
+          }
+          return c_item?.type === type;
+        });
+        item.totalConsume = total;
+        return item;
+      });
+    }
     return { code: 0, message: '查询成功', data, total };
   }
 
