@@ -1,1 +1,0 @@
-import{h as a}from"./index.ebdb19dc.js";const d=async d=>a("/api/menu",{method:"POST",data:d}),e=async d=>a(`/api/menu/${d}`,{method:"DELETE"}),m=async(d,e)=>a(`/api/menu/${d}`,{method:"PATCH",data:e}),n=async d=>a("/api/menu/many",{method:"POST",data:d});export{n as a,d as c,e as d,m as u};
