@@ -8,7 +8,6 @@ import {
   Delete,
   UseGuards,
   UsePipes,
-  Req,
   Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -17,7 +16,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
-import { Request } from 'express';
 
 @ApiTags('users')
 @UseGuards(AuthGuard('jwt'))
@@ -28,8 +26,8 @@ export class UsersController {
   @UsePipes(new MyValidationPipe())
   @Post()
   @ApiBody({ type: CreateUserDto })
-  create(@Body() createUserDto: CreateUserDto, @Req() request: Request) {
-    return this.usersService.create(createUserDto, request);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -37,19 +35,15 @@ export class UsersController {
     return this.usersService.findAll(Query);
   }
 
-  // @UsePipes(new MyValidationPipe())
-  // @Patch(':id')
-  // @ApiBody({ type: UpdateUserDto })
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateUserDto: UpdateUserDto,
-  //   @Req() request: Request,
-  // ) {
-  //   return this.usersService.update(id, updateUserDto, request);
-  // }
+  @UsePipes(new MyValidationPipe())
+  @Patch(':id')
+  @ApiBody({ type: UpdateUserDto })
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(id, updateUserDto);
+  }
 
-  @Delete(':id/:fileName')
-  remove(@Param('id') id: string, @Param('fileName') fileName: string) {
-    return this.usersService.remove(id, fileName);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
   }
 }

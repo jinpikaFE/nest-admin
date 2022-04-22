@@ -26,8 +26,8 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
   phone: string;
 
-  @IsString({ message: '角色必须是 String 类型' })
-  @IsNotEmpty({ message: '角色不能为空' })
+  @IsString({ message: '角色id必须是 String 类型' })
+  @IsNotEmpty({ message: '角色id不能为空' })
   @ApiProperty()
   @Prop({
     required: true,
@@ -37,9 +37,11 @@ export class User extends Document {
   })
   roleId: any;
 
+  @IsString({ message: '头像必须是 String 类型' })
+  @IsNotEmpty({ message: '头像不能为空' })
   @ApiProperty()
-  @Prop([mongoose.Schema.Types.Mixed])
-  avatar: any;
+  @Prop()
+  avatar: string;
 
   @IsString({ message: '密码必须是 String 类型' })
   @IsNotEmpty({ message: '密码不能为空' })
