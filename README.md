@@ -99,3 +99,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## 2.0.1 更新 主要使用mogodb
+
+- 登录优化
+- 数据库一对多，多对多优化
+- 文件上传优化

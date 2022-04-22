@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as fs from 'fs';
 import { AllExceptionsFilter } from './filter/all-exceptions.filter';
 import { AppModule } from './app.module';
 import { logger } from './middleware/logger.middleware';
@@ -28,6 +29,8 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, options);
+  /** 生成swagger json使用apifox直接导入 */
+  fs.writeFileSync('./swagger-spec.json', JSON.stringify(document));
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalFilters(new AllExceptionsFilter());
