@@ -37,21 +37,16 @@ export class UsersController {
     return this.usersService.findAll(Query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
-  @UsePipes(new MyValidationPipe())
-  @Patch(':id')
-  @ApiBody({ type: UpdateUserDto })
-  update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-    @Req() request: Request,
-  ) {
-    return this.usersService.update(id, updateUserDto, request);
-  }
+  // @UsePipes(new MyValidationPipe())
+  // @Patch(':id')
+  // @ApiBody({ type: UpdateUserDto })
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateUserDto: UpdateUserDto,
+  //   @Req() request: Request,
+  // ) {
+  //   return this.usersService.update(id, updateUserDto, request);
+  // }
 
   @Delete(':id/:fileName')
   remove(@Param('id') id: string, @Param('fileName') fileName: string) {

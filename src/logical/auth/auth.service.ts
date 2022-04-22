@@ -5,12 +5,13 @@ import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '../../utils/cryptogram';
 import { Model } from 'mongoose';
 import { IUser } from 'src/routers/users/interface/user';
+import { UserDocument } from 'src/routers/users/schema/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('UserModelToken')
-    private readonly userModel: Model<IUser>,
+    @InjectModel('User') private userModel: Model<UserDocument>,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}

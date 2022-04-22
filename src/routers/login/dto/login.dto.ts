@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { loginType } from '../types/enum';
 
 export class LoginDto {
   @IsString({ message: '用户名必须是 String 类型' })
@@ -12,6 +13,7 @@ export class LoginDto {
   password: string;
 
   @IsNotEmpty({ message: '登录类型不能为空' })
-  @ApiProperty()
-  loginType: 'phone' | 'account';
+  @IsEnum(loginType, { message: '登录类型只能为phone 和 account' })
+  @ApiProperty({ enum: ['phone', 'account'] })
+  loginType: loginType;
 }

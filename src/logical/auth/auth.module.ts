@@ -7,9 +7,9 @@ import { jwtConstants } from './constats';
 import { UsersModule } from 'src/routers/users/users.module';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
-import { usersProviders } from 'src/routers/users/users.providers';
-import { DatabaseModule } from 'src/providers/database/database.module';
 import { UsersService } from 'src/routers/users/users.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from 'src/routers/users/schema/user.schema';
 
 @Module({
   imports: [
@@ -19,16 +19,10 @@ import { UsersService } from 'src/routers/users/users.service';
       signOptions: { expiresIn: '1h' }, // token 过期时效
     }),
     UsersModule,
-    DatabaseModule,
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    UsersService,
-    ...usersProviders,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, UsersService],
   exports: [AuthService],
 })
 export class AuthModule {}

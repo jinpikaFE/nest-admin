@@ -13,24 +13,24 @@ export class LoginService {
         userName,
         password,
       );
-      const {
-        userName: name,
-        email,
-        phone,
-        role,
-        avatar,
-        registerTime,
-      } = authResult?.user;
-      const userInfo = {
-        userName: name,
-        email,
-        phone,
-        role,
-        avatar,
-        registerTime,
-      };
       switch (authResult.code) {
         case 0:
+          const {
+            userName: name,
+            email,
+            phone,
+            role,
+            avatar,
+            registerTime,
+          } = authResult?.user;
+          const userInfo = {
+            userName: name,
+            email,
+            phone,
+            role,
+            avatar,
+            registerTime,
+          };
           const res = await this.authService.certificate(authResult?.user);
           if (authResult?.user?.userName === 'admin') {
             return {

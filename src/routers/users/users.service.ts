@@ -8,19 +8,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUser } from './interface/user';
 import { Request } from 'express';
+import { InjectModel } from '@nestjs/mongoose';
+import { UserDocument } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @Inject('UserModelToken')
-    private readonly userModel: Model<IUser>,
-  ) {}
+  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
 
   async create(
     createUserDto: CreateUserDto,
     request: Request,
   ): Promise<RuleResType<any>> {
-    const { userName, password, email, phone, role, avatar } = createUserDto;
+    const { userName, password, email, phone, roleId, avatar } = createUserDto;
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
     const fileName = `avatar_${new Date().getTime()}`;
@@ -37,7 +36,7 @@ export class UsersService {
       salt,
       email,
       phone,
-      role,
+      roleId,
       avatar: res
         ? [
             {
@@ -60,7 +59,7 @@ export class UsersService {
       pageSize,
       registerTime,
       userName,
-      role,
+      roleId,
       email,
       phone,
       startTime,
@@ -70,7 +69,7 @@ export class UsersService {
     email && (findObj.email = eval(`/${email}/i`));
     phone && (findObj.phone = eval(`/${phone}/i`));
     userName && (findObj.userName = eval(`/${userName}/i`));
-    role && (findObj.role = { $in: role });
+    roleId && (findObj.roleId = { $in: roleId });
     startTime &&
       endTime &&
       (findObj.registerTime = {
@@ -79,80 +78,80 @@ export class UsersService {
       });
     const data = await this.userModel
       .find(findObj, { password: 0, salt: 0 })
+      .populate('roleId', ['name'])
       .skip((Number(current) - 1) * Number(pageSize))
       .limit(Number(pageSize))
       .sort({ registerTime: registerTime === 'descend' ? -1 : 1 });
-    const total = await this.userModel.find(findObj).count();
+    const total = await this.userModel
+      .find(findObj)
+      .populate('roleId', ['name'])
+      .count();
     return { code: 0, message: '查询成功', data, total };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  async update(
-    id: string,
-    updateUserDto: UpdateUserDto,
-    request: Request,
-  ): Promise<RuleResType<any>> {
-    const { userName, email, phone, role, avatar } = updateUserDto;
-    const resFind = await this.userModel.findById(id);
-    let upAvatar;
-    // 头像传过来则上传为文件，切用url储存
-    if (
-      resFind &&
-      resFind.avatar?.[0]?.uid === avatar?.[0]?.uid &&
-      resFind.avatar
-    ) {
-      upAvatar = avatar;
-    } else {
-      const fileName = `avatar_${new Date().getTime()}`;
-      const removeAndUp = () => {
-        if (resFind.avatar && resFind.avatar?.[0]?.name) {
-          fs_delete(
-            path.join(
-              __dirname,
-              '../../../',
-              `src/asset/${resFind.avatar?.[0]?.uid}.png`,
-            ),
-          );
-        }
-        base64ToFile(
-          avatar,
-          path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
-        );
-        return true;
-      };
-      // 头像传过来则上传为文件，切用url储存
-      const res = avatar ? removeAndUp() : false;
-      upAvatar = res
-        ? [
-            {
-              uid: fileName,
-              name: `${fileName}.png`,
-              status: 'done',
-              url: `${request.protocol}://${request?.get(
-                'host',
-              )}/asset/${fileName}.png`,
-            },
-          ]
-        : '';
-    }
-    const data = await this.userModel.findOneAndUpdate(
-      { _id: id },
-      {
-        userName,
-        email,
-        phone,
-        role,
-        avatar: upAvatar,
-      },
-    );
-    if (data) {
-      return { code: 0, message: '更新成功', data };
-    }
-    return { code: -1, message: '更新失败', data };
-  }
+  // async update(
+  //   id: string,
+  //   updateUserDto: UpdateUserDto,
+  //   request: Request,
+  // ): Promise<RuleResType<any>> {
+  //   const { userName, email, phone, role, avatar } = updateUserDto;
+  //   const resFind = await this.userModel.findById(id);
+  //   let upAvatar;
+  //   // 头像传过来则上传为文件，切用url储存
+  //   if (
+  //     resFind &&
+  //     resFind.avatar?.[0]?.uid === avatar?.[0]?.uid &&
+  //     resFind.avatar
+  //   ) {
+  //     upAvatar = avatar;
+  //   } else {
+  //     const fileName = `avatar_${new Date().getTime()}`;
+  //     const removeAndUp = () => {
+  //       if (resFind.avatar && resFind.avatar?.[0]?.name) {
+  //         fs_delete(
+  //           path.join(
+  //             __dirname,
+  //             '../../../',
+  //             `src/asset/${resFind.avatar?.[0]?.uid}.png`,
+  //           ),
+  //         );
+  //       }
+  //       base64ToFile(
+  //         avatar,
+  //         path.join(__dirname, '../../../', `src/assets/${fileName}.png`),
+  //       );
+  //       return true;
+  //     };
+  //     // 头像传过来则上传为文件，切用url储存
+  //     const res = avatar ? removeAndUp() : false;
+  //     upAvatar = res
+  //       ? [
+  //           {
+  //             uid: fileName,
+  //             name: `${fileName}.png`,
+  //             status: 'done',
+  //             url: `${request.protocol}://${request?.get(
+  //               'host',
+  //             )}/asset/${fileName}.png`,
+  //           },
+  //         ]
+  //       : '';
+  //   }
+  //   const data = await this.userModel.findOneAndUpdate(
+  //     { _id: id },
+  //     {
+  //       userName,
+  //       email,
+  //       phone,
+  //       role,
+  //       avatar: upAvatar,
+  //     },
+  //   );
+  //   if (data) {
+  //     return { code: 0, message: '更新成功', data };
+  //   }
+  //   return { code: -1, message: '更新失败', data };
+  // }
 
   async remove(id: string, fileName): Promise<RuleResType<any>> {
     const data = await this.userModel.remove({ _id: id });

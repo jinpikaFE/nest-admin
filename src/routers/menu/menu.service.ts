@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RuleResType } from 'src/types/global';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-import { IMenu } from './interface/menu';
+import { MenuDocument } from './schema/menu.schema';
 
 @Injectable()
 export class MenuService {
   constructor(
-    @Inject('MenuModelToken')
-    private readonly menuModel: Model<IMenu>,
+    @InjectModel('Menu') private readonly menuModel: Model<MenuDocument>,
   ) {}
 
   async create(createMenuDto: CreateMenuDto): Promise<RuleResType<any>> {

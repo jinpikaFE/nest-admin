@@ -1,18 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RuleResType } from 'src/types/global';
-import { IUser } from '../users/interface/user';
+import { UserDocument } from '../users/schema/user.schema';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { IRole } from './interface/role';
+import { RoleDocument } from './schema/role.schema';
 
 @Injectable()
 export class RolesService {
   constructor(
-    @Inject('RoleModelToken')
-    private readonly roleModel: Model<IRole>,
-    @Inject('UserModelToken')
-    private readonly userModel: Model<IUser>,
+    @InjectModel('Role') private readonly roleModel: Model<RoleDocument>,
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<RuleResType<any>> {
