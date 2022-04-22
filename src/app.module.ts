@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from './filter/all-exceptions.filter';
 import { AuthModule } from './logical/auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -14,6 +15,17 @@ import { join } from 'path';
     AuthModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'documentation'),
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'root',
+      database: 'test',
+      entities: [],
+      synchronize: true,
+      autoLoadEntities: true,
     }),
   ],
   providers: [
