@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
 import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 
-import { InjectModel } from '@nestjs/mongoose';
-import { UserDocument } from './schema/user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userModel: Repository<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
     const { userName, password, email, phone, roleId, avatar } = createUserDto;
@@ -87,10 +90,7 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<RuleResType<any>> {
-    const data = await this.userModel.remove({ _id: id });
-    if (data?.deletedCount >= 1) {
-      return { code: 0, message: '删除成功', data: null };
-    }
-    return { code: -1, message: '删除失败', data };
+    const data = await this.userModel.delete(id);
+    return { code: 0, message: '删除成功', data };
   }
 }

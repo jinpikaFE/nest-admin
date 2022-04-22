@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './routers/users/users.module';
 import { LoginModule } from './routers/login/login.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -10,6 +9,7 @@ import { join } from 'path';
 import { RolesModule } from './routers/roles/roles.module';
 import { MenuModule } from './routers/menu/menu.module';
 import { UploadModule } from './routers/upload/upload.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -28,7 +28,16 @@ import { UploadModule } from './routers/upload/upload.module';
       rootPath: join(__dirname, '..', 'web'),
       serveRoot: '',
     }),
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/nest-admin'),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'q847164495',
+      database: 'nest_admin',
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
     MenuModule,
     RolesModule,
     UploadModule,

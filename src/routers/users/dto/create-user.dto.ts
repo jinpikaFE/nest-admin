@@ -1,7 +1,7 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { User } from '../schema/user.schema';
+import { User } from '../entities/user.entity';
 export class CreateUserDto extends OmitType(User, [
   'salt',
   'registerTime',
