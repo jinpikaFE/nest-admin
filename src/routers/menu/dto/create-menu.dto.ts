@@ -1,7 +1,8 @@
 import { OmitType } from '@nestjs/mapped-types';
-import { Menu } from '../schema/menu.schema';
+import { Menu } from '../entities/menu.entity';
 
 export class CreateMenuDto extends OmitType(Menu, [
   'authority',
-  'registerTime',
+  'createTime',
+  'updateTime',
 ] as const) {}

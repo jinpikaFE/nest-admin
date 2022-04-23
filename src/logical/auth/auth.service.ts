@@ -1,17 +1,17 @@
 // src/logical/auth/auth.service.ts
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from '../../routers/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '../../utils/cryptogram';
-import { Model } from 'mongoose';
-import { IUser } from 'src/routers/users/interface/user';
-import { UserDocument } from 'src/routers/users/schema/user.schema';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/routers/users/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel('User') private userModel: Model<UserDocument>,
+    @InjectRepository(User)
+    private readonly userModel: Repository<User>,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
@@ -32,7 +32,10 @@ export class AuthService {
         message: '密码错误',
       };
     } else {
-      const user = await this.userModel.findOne({ userName });
+      const user = await this.userModel
+        .createQueryBuilder()
+        .where({ userName })
+        .getOne();
       if (user) {
         const hashedPassword = user.password;
         const salt = user.salt;

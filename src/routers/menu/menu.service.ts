@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
+import { Repository } from 'typeorm';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-import { MenuDocument } from './schema/menu.schema';
+import { Menu } from './entities/menu.entity';
 
 @Injectable()
 export class MenuService {
   constructor(
-    @InjectModel('Menu') private readonly menuModel: Model<MenuDocument>,
+    @InjectRepository(Menu)
+    private readonly menuModel: Repository<Menu>,
   ) {}
 
   async create(createMenuDto: CreateMenuDto): Promise<RuleResType<any>> {
     const { name, path, lastMenu, icon, status, isLink, color } = createMenuDto;
-    const data = await this.menuModel.create({
+    const data = await this.menuModel.save({
       name,
       path,
       lastMenu,
@@ -39,10 +40,7 @@ export class MenuService {
     id: string,
     updateMenuDto: CreateMenuDto,
   ): Promise<RuleResType<any>> {
-    const data = await this.menuModel.findOneAndUpdate(
-      { _id: id },
-      updateMenuDto,
-    );
+    const data = await this.menuModel.update(id, updateMenuDto);
     if (data) {
       return { code: 0, message: '更新成功', data };
     }
@@ -50,34 +48,31 @@ export class MenuService {
   }
 
   async remove(id: string): Promise<RuleResType<any>> {
-    const data = await this.menuModel.remove({ _id: id });
-    if (data?.deletedCount >= 1) {
-      return { code: 0, message: '删除成功', data };
-    }
-    return { code: -1, message: '删除失败', data };
+    const data = await this.menuModel.delete(id);
+    return { code: 0, message: '删除成功', data };
   }
 
-  async updateMany(updateMenuDto: UpdateMenuDto): Promise<RuleResType<any>> {
-    const { name, authority } = updateMenuDto;
-    let data = null;
-    if (authority) {
-      await this.menuModel.updateMany(
-        { authority: name },
-        { $pull: { authority: name } },
-      );
-      data = await this.menuModel.updateMany(
-        { _id: { $in: authority } },
-        { $push: { authority: name } },
-      );
-    } else {
-      data = await this.menuModel.updateMany(
-        { authority: name },
-        { $pull: { authority: name } },
-      );
-    }
-    if (data) {
-      return { code: 0, message: '更新成功', data };
-    }
-    return { code: -1, message: '更新失败', data };
-  }
+  // async updateMany(updateMenuDto: UpdateMenuDto): Promise<RuleResType<any>> {
+  //   const { name, authority } = updateMenuDto;
+  //   let data = null;
+  //   if (authority) {
+  //     await this.menuModel.updateMany(
+  //       { authority: name },
+  //       { $pull: { authority: name } },
+  //     );
+  //     data = await this.menuModel.updateMany(
+  //       { _id: { $in: authority } },
+  //       { $push: { authority: name } },
+  //     );
+  //   } else {
+  //     data = await this.menuModel.updateMany(
+  //       { authority: name },
+  //       { $pull: { authority: name } },
+  //     );
+  //   }
+  //   if (data) {
+  //     return { code: 0, message: '更新成功', data };
+  //   }
+  //   return { code: -1, message: '更新失败', data };
+  // }
 }

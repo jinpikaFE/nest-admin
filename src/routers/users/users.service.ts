@@ -20,7 +20,7 @@ export class UsersService {
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
 
-    await this.userModel.create({
+    await this.userModel.save({
       userName,
       password: hashPwd,
       salt,
@@ -36,7 +36,6 @@ export class UsersService {
     const {
       current,
       pageSize,
-      registerTime,
       userName,
       roleId,
       email,
@@ -44,28 +43,37 @@ export class UsersService {
       startTime,
       endTime,
     } = params;
-    const findObj: any = {};
-    email && (findObj.email = eval(`/${email}/i`));
-    phone && (findObj.phone = eval(`/${phone}/i`));
-    userName && (findObj.userName = eval(`/${userName}/i`));
-    roleId && (findObj.roleId = { $in: roleId });
-    startTime &&
-      endTime &&
-      (findObj.registerTime = {
-        $gte: new Date(startTime),
-        $lte: new Date(endTime),
+    let data = this.userModel.createQueryBuilder().where({});
+    if (userName) {
+      data = data.andWhere({ userName });
+    }
+    if (email) {
+      data = data.andWhere({ email });
+    }
+    if (phone) {
+      data = data.andWhere({ phone });
+    }
+    if (email) {
+      data = data.andWhere({ email });
+    }
+    if (roleId) {
+      data = data.andWhere({ roleId });
+    }
+    if (startTime && endTime) {
+      data = data.andWhere('createTime BETWEEN :start AND :end', {
+        start: startTime,
+        end: endTime,
       });
-    const data = await this.userModel
-      .find(findObj, { password: 0, salt: 0 })
-      .populate('roleId', ['name'])
+    }
+    data = data
       .skip((Number(current) - 1) * Number(pageSize))
-      .limit(Number(pageSize))
-      .sort({ registerTime: registerTime === 'descend' ? -1 : 1 });
-    const total = await this.userModel
-      .find(findObj)
-      .populate('roleId', ['name'])
-      .count();
-    return { code: 0, message: '查询成功', data, total };
+      .take(Number(pageSize));
+    return {
+      code: 0,
+      message: '查询成功',
+      data: await data.getMany(),
+      total: await data.getCount(),
+    };
   }
 
   async update(
@@ -73,16 +81,13 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<RuleResType<any>> {
     const { userName, email, phone, roleId, avatar } = updateUserDto;
-    const data = await this.userModel.findOneAndUpdate(
-      { _id: id },
-      {
-        userName,
-        email,
-        phone,
-        roleId,
-        avatar,
-      },
-    );
+    const data = await this.userModel.update(id, {
+      userName,
+      email,
+      phone,
+      roleId,
+      avatar,
+    });
     if (data) {
       return { code: 0, message: '更新成功', data };
     }

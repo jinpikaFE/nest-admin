@@ -51,10 +51,10 @@ export class MenuController {
     return this.menuService.remove(id);
   }
 
-  @UsePipes(new MyValidationPipe())
-  @Post('/many')
-  @ApiBody({ type: UpdateMenuDto })
-  updateMany(@Body() updateMenuDto: UpdateMenuDto) {
-    return this.menuService.updateMany(updateMenuDto);
-  }
+  // @UsePipes(new MyValidationPipe())
+  // @Post('/many')
+  // @ApiBody({ type: UpdateMenuDto })
+  // updateMany(@Body() updateMenuDto: UpdateMenuDto) {
+  //   return this.menuService.updateMany(updateMenuDto);
+  // }
 }

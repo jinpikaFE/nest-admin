@@ -1,22 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
-import { UserDocument } from '../users/schema/user.schema';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { RoleDocument } from './schema/role.schema';
+import { Role } from './entities/role.entity';
 
 @Injectable()
 export class RolesService {
   constructor(
-    @InjectModel('Role') private readonly roleModel: Model<RoleDocument>,
-    @InjectModel('User') private readonly userModel: Model<UserDocument>,
+    @InjectRepository(Role)
+    private readonly roleModel: Repository<Role>,
+    @InjectRepository(User)
+    private readonly userModel: Repository<User>,
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<RuleResType<any>> {
     const { name, authority } = createRoleDto;
-    const data = await this.roleModel.create({
+    const data = await this.roleModel.save({
       name,
       authority,
     });
@@ -36,22 +38,28 @@ export class RolesService {
       startTime,
       endTime,
     } = params;
-    const findObj: any = {};
-    name && (findObj.name = eval(`/${name}/i`));
-    authority && (findObj.authority = { $in: authority });
-    startTime &&
-      endTime &&
-      (findObj.registerTime = {
-        $gte: new Date(startTime),
-        $lte: new Date(endTime),
+    let data = this.roleModel.createQueryBuilder().where({});
+    if (name) {
+      data = data.andWhere({ name });
+    }
+    if (authority) {
+      data = data.andWhere({ authority });
+    }
+    if (startTime && endTime) {
+      data = data.andWhere('createTime BETWEEN :start AND :end', {
+        start: startTime,
+        end: endTime,
       });
-    const data = await this.roleModel
-      .find(findObj)
+    }
+    data = data
       .skip((Number(current) - 1) * Number(pageSize))
-      .limit(Number(pageSize))
-      .sort({ registerTime: registerTime === 'descend' ? -1 : 1 });
-    const total = await this.roleModel.find(findObj).count();
-    return { code: 0, message: '查询成功', data, total };
+      .take(Number(pageSize));
+    return {
+      code: 0,
+      message: '查询成功',
+      data: await data.getMany(),
+      total: await data.getCount(),
+    };
   }
 
   async findAll(): Promise<RuleResType<any>> {
@@ -59,19 +67,11 @@ export class RolesService {
     return { code: 0, message: '查询成功', data };
   }
 
-  async findOne(id: string): Promise<RuleResType<any>> {
-    const data = await this.roleModel.findById(id);
-    return { code: 0, message: '查询成功', data };
-  }
-
   async update(
     id: string,
     updateRoleDto: UpdateRoleDto,
   ): Promise<RuleResType<any>> {
-    const data = await this.roleModel.findOneAndUpdate(
-      { _id: id },
-      updateRoleDto,
-    );
+    const data = await this.roleModel.update(id, updateRoleDto);
     if (data) {
       return { code: 0, message: '更新成功', data };
     }
@@ -79,15 +79,15 @@ export class RolesService {
   }
 
   async remove(id: string, name: string): Promise<RuleResType<any>> {
-    const resUser = await this.userModel.find({ role: name });
+    const resUser = await this.userModel
+      .createQueryBuilder()
+      .where({ role: name })
+      .getMany();
     if (resUser.length > 0) {
       return { code: -1, message: '删除失败,该角色下存在用户', data: null };
     } else {
-      const data = await this.roleModel.remove({ _id: id });
-      if (data?.deletedCount >= 1) {
-        return { code: 0, message: '删除成功', data };
-      }
-      return { code: -1, message: '删除失败', data };
+      const data = await this.roleModel.delete(id);
+      return { code: 0, message: '删除成功', data };
     }
   }
 }
