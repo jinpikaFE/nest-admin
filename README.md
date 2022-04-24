@@ -100,9 +100,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](LICENSE).
 
-## 2.0.1 更新 主要使用mogodb
+## 2.0.1_mysql 更新 主要使用mysql
 
 - 登录优化
 - 数据库一对多，多对多优化
 - 文件上传优化
-- 使用 @nestjs/mongoose 进行orm优化 [@nestjs/mongoose](https://docs.nestjs.cn/8/techniques?id=mongo#:~:text=%E5%8F%AF%E7%94%A8%E7%9A%84%E4%BE%8B%E5%AD%90%E3%80%82-,Mongo,-Nest%E6%94%AF%E6%8C%81%E4%B8%A4)
+- 使用 typeorm_mysql
