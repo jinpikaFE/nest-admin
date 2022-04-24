@@ -30,8 +30,8 @@ export class RolesService {
 
   async filterQuery(params): Promise<RuleResType<any>> {
     const {
-      current,
-      pageSize,
+      current = 1,
+      pageSize = 10,
       registerTime,
       name,
       authority,

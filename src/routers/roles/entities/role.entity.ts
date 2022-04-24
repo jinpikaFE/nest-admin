@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { User } from 'src/routers/users/entities/user.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -23,6 +25,10 @@ export class Role {
   @ApiProperty()
   @Column()
   authority: string;
+
+  @ApiProperty()
+  @OneToMany(() => User, (user) => user.role) // 将另一面指定为第二个参数
+  user: User[];
 
   @CreateDateColumn({
     type: 'timestamp',

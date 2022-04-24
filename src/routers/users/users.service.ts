@@ -16,7 +16,7 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
-    const { userName, password, email, phone, roleId, avatar } = createUserDto;
+    const { userName, password, email, phone, role, avatar } = createUserDto;
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
 
@@ -26,7 +26,7 @@ export class UsersService {
       salt,
       email,
       phone,
-      roleId,
+      role,
       avatar,
     });
     return { code: 0, message: '创建成功', data: null };
@@ -34,16 +34,19 @@ export class UsersService {
 
   async findAll(params): Promise<RuleResType<any>> {
     const {
-      current,
-      pageSize,
+      current = 1,
+      pageSize = 10,
       userName,
-      roleId,
+      role,
       email,
       phone,
       startTime,
       endTime,
     } = params;
-    let data = this.userModel.createQueryBuilder().where({});
+    let data = this.userModel
+      .createQueryBuilder()
+      .leftJoinAndSelect('User.role', 'Role.user')
+      .where({});
     if (userName) {
       data = data.andWhere({ userName });
     }
@@ -56,8 +59,8 @@ export class UsersService {
     if (email) {
       data = data.andWhere({ email });
     }
-    if (roleId) {
-      data = data.andWhere({ roleId });
+    if (role) {
+      data = data.andWhere({ role });
     }
     if (startTime && endTime) {
       data = data.andWhere('createTime BETWEEN :start AND :end', {
@@ -80,12 +83,12 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<RuleResType<any>> {
-    const { userName, email, phone, roleId, avatar } = updateUserDto;
+    const { userName, email, phone, role, avatar } = updateUserDto;
     const data = await this.userModel.update(id, {
       userName,
       email,
       phone,
-      roleId,
+      role,
       avatar,
     });
     if (data) {

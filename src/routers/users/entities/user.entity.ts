@@ -1,11 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { Role } from 'src/routers/roles/entities/role.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -31,16 +36,12 @@ export class User {
   @Column({ unique: true })
   phone: string;
 
-  @IsString({ message: '角色id必须是 String 类型' })
+  // @IsString({ message: '角色id必须是 String 类型' })
   @IsNotEmpty({ message: '角色id不能为空' })
   @ApiProperty()
-  @Column({
-    nullable: true,
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Role',
-    //   default: null,
-  })
-  roleId: string;
+  @ManyToOne(() => Role, (role) => role.user)
+  @JoinColumn()
+  role: Role[];
 
   @IsString({ message: '头像必须是 String 类型' })
   @IsNotEmpty({ message: '头像不能为空' })
