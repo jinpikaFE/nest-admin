@@ -106,3 +106,7 @@ Nest is [MIT licensed](LICENSE).
 - 数据库一对多，多对多优化
 - 文件上传优化
 - 使用 typeorm_mysql
+
+## 2.0.1_mysql_redis 更新
+
+- 使用redis进行挤出登录功能

@@ -15,9 +15,11 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { RbacGuard } from 'src/guards/token.guard';
 
 @ApiTags('menu')
 @UseGuards(AuthGuard('jwt'))
+@UseGuards(RbacGuard)
 @Controller('api/menu')
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}

@@ -16,9 +16,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
+import { RbacGuard } from 'src/guards/token.guard';
 
 @ApiTags('users')
 @UseGuards(AuthGuard('jwt'))
+@UseGuards(RbacGuard)
 @Controller('api/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

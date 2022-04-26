@@ -37,6 +37,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'nest_admin',
       synchronize: true,
       autoLoadEntities: true,
+      timezone: '+08:00', // 东八时区
     }),
     MenuModule,
     RolesModule,

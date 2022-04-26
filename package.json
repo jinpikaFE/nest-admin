@@ -34,6 +34,7 @@
     "@nestjs/typeorm": "^8.0.3",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "ioredis": "^5.0.4",
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
     "mysql2": "^2.3.3",

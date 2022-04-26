@@ -16,9 +16,11 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
+import { RbacGuard } from 'src/guards/token.guard';
 
 @ApiTags('roles')
 @UseGuards(AuthGuard('jwt'))
+@UseGuards(RbacGuard)
 @Controller('api/roles')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}

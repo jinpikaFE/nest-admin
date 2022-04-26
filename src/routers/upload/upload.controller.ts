@@ -11,9 +11,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { Request } from 'express';
+import { RbacGuard } from 'src/guards/token.guard';
 
 @ApiTags('upload')
 @UseGuards(AuthGuard('jwt'))
+@UseGuards(RbacGuard)
 @Controller('/api/upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
