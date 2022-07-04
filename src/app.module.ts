@@ -7,9 +7,9 @@ import { AuthModule } from './logical/auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { RolesModule } from './routers/roles/roles.module';
-import { MenuModule } from './routers/menu/menu.module';
 import { UploadModule } from './routers/upload/upload.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ComponModule } from './routers/compon/compon.module';
 
 @Module({
   imports: [
@@ -39,9 +39,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       timezone: '+08:00', // 东八时区
     }),
-    MenuModule,
     RolesModule,
     UploadModule,
+    ComponModule,
   ],
   providers: [
     {
