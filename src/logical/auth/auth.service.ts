@@ -81,7 +81,7 @@ export class AuthService {
       try {
         await redis.setex(
           `${payload._id}-${payload.userName}`,
-          300,
+          24 * 60 * 60,
           `${token}`,
         );
       } catch {

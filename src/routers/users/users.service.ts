@@ -16,12 +16,12 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
-    const { userName, password, email, phone, role, avatar } = createUserDto;
+    const { username, password, email, phone, role, avatar } = createUserDto;
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
 
     await this.userModel.save({
-      userName,
+      username,
       password: hashPwd,
       salt,
       email,
@@ -83,9 +83,9 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<RuleResType<any>> {
-    const { userName, email, phone, role, avatar } = updateUserDto;
+    const { username, email, phone, role, avatar } = updateUserDto;
     const data = await this.userModel.update(id, {
-      userName,
+      username,
       email,
       phone,
       role,

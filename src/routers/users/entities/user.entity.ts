@@ -22,7 +22,7 @@ export class User {
   @IsNotEmpty({ message: '用户名不能为空' })
   @ApiProperty({ uniqueItems: true })
   @Column({ unique: true })
-  userName: string;
+  username: string;
 
   @IsString({ message: '邮箱必须是 String 类型' })
   @IsNotEmpty({ message: '邮箱不能为空' })

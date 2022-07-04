@@ -7,16 +7,16 @@ import { AuthService } from 'src/logical/auth/auth.service';
 export class LoginService {
   constructor(private readonly authService: AuthService) {}
   async login(loginDto: LoginDto): Promise<RuleResType<any>> {
-    const { userName, password, loginType } = loginDto;
+    const { username, password, loginType } = loginDto;
     if (loginType === 'account') {
       const authResult = await this.authService.validateUser(
-        userName,
+        username,
         password,
       );
       switch (authResult.code) {
         case 0:
           const {
-            userName: name,
+            username: name,
             email,
             phone,
             role,

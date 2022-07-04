@@ -32,7 +32,9 @@ export class RbacGuard implements CanActivate {
 
     if (token !== cache) {
       // 如果 token 不匹配，禁止访问
-      throw new UnauthorizedException('您的账号在其他地方登录，请重新登录');
+      throw new UnauthorizedException(
+        'token失效或者您的账号在其他地方登录，请重新登录',
+      );
     }
 
     return true;
