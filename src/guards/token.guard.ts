@@ -16,6 +16,12 @@ export class RbacGuard implements CanActivate {
     const authorization = request['headers'].authorization || void 0;
     const token = authorization?.split?.(' ')?.[1]; // authorization: Bearer xxx
     const base64Payload = token?.split?.('.')?.[1];
+
+    if (!base64Payload) {
+      // 如果 token 不匹配，禁止访问
+      throw new UnauthorizedException('token is required');
+    }
+
     const payloadBuffer = Buffer.from(base64Payload, 'base64');
     const userinfo = JSON.parse(payloadBuffer.toString());
 
