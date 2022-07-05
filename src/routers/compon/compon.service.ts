@@ -48,12 +48,13 @@ export class ComponService {
     try {
       const resCompon = await this.componModel
         .createQueryBuilder()
-        .where({ parentId: updateComponDto?.id })
+        .where({ parentId: id })
         .getMany();
       if (resCompon.length > 0) {
         await queryRunner.rollbackTransaction();
         return { code: -1, message: '删除失败，请先删除子组件', data: null };
       }
+      // throw new Error('错误了'); // 测试主动抛出异常是否回滚
       const data = await this.componModel.delete(id);
       await await queryRunner.commitTransaction();
       return { code: 0, message: '删除成功', data };

@@ -7,14 +7,20 @@ import {
   Param,
   Delete,
   UsePipes,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { RbacGuard } from 'src/guards/token.guard';
 import { MyValidationPipe } from 'src/pipe/validation.pipe';
 import { ComponService } from './compon.service';
 import { CreateComponDto } from './dto/create-compon.dto';
 import { UpdateComponDto } from './dto/update-compon.dto';
 
-@Controller('compon')
+@ApiTags('compons')
+@UseGuards(AuthGuard('jwt'))
+@UseGuards(RbacGuard)
+@Controller('api/compon')
 export class ComponController {
   constructor(private readonly componService: ComponService) {}
 

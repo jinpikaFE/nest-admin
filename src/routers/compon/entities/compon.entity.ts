@@ -21,18 +21,16 @@ export class Compon {
 
   @IsString({ message: '类型必须是 String 类型' })
   @IsNotEmpty({ message: '类型不能为空' })
+  @ApiProperty()
   @Column()
   type: string;
 
-  @IsString({ message: '类型必须是 String 类型' })
-  @IsNotEmpty({ message: '类型不能为空' })
-  @Column()
-  key: string;
-
-  @Column()
+  @ApiProperty()
+  @Column({ default: null })
   parentId?: string;
 
-  @Column()
+  @ApiProperty()
+  @Column({ default: null })
   parentName?: string;
 
   @CreateDateColumn({
