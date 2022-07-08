@@ -21,10 +21,19 @@ export class Role {
   @Column({ unique: true })
   name: string;
 
-  @IsNotEmpty({ message: '权限不能为空' })
+  @IsString({ message: '角色描述必须是 String 类型' })
+  @IsNotEmpty({ message: '角色描述不能为空' })
   @ApiProperty()
   @Column()
-  authority: string;
+  desc: string;
+
+  @IsNotEmpty({ message: '权限不能为空' })
+  @ApiProperty()
+  @Column({ type: 'simple-array' })
+  authority: string[];
+
+  @Column({ default: false })
+  is_super: boolean;
 
   @ApiProperty()
   @OneToMany(() => User, (user) => user.role) // 将另一面指定为第二个参数

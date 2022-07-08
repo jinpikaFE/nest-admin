@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -29,9 +30,8 @@ export class Compon {
   @Column({ default: null })
   parentId?: string;
 
-  @ApiProperty()
-  @Column({ default: null })
-  parentName?: string;
+  @ManyToOne(() => Compon, (compon) => compon.parent) // 将另一面指定为第二个参数
+  parent: Compon;
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -29,7 +29,7 @@ export class UsersService {
       role,
       avatar,
     });
-    return { code: 0, message: '创建成功', data: null };
+    return { code: 200, message: '创建成功', data: null };
   }
 
   async findAll(params): Promise<RuleResType<any>> {
@@ -45,7 +45,9 @@ export class UsersService {
     } = params;
     let data = this.userModel
       .createQueryBuilder()
-      .leftJoinAndSelect('User.role', 'Role.user')
+      /** 第一个是关系， 第二个是表别名 */
+      .leftJoinAndSelect('User.role', 'role')
+      .select(['User', 'role.id', 'role.name', 'role.authority'])
       .where({});
     if (userName) {
       data = data.andWhere({ userName });
@@ -72,7 +74,7 @@ export class UsersService {
       .skip((Number(current) - 1) * Number(pageSize))
       .take(Number(pageSize));
     return {
-      code: 0,
+      code: 200,
       message: '查询成功',
       data: await data.getMany(),
       total: await data.getCount(),
@@ -92,13 +94,13 @@ export class UsersService {
       avatar,
     });
     if (data) {
-      return { code: 0, message: '更新成功', data };
+      return { code: 200, message: '更新成功', data };
     }
     return { code: -1, message: '更新失败', data };
   }
 
   async remove(id: string): Promise<RuleResType<any>> {
     const data = await this.userModel.delete(id);
-    return { code: 0, message: '删除成功', data };
+    return { code: 200, message: '删除成功', data };
   }
 }

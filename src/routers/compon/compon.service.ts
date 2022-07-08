@@ -16,14 +16,22 @@ export class ComponService {
   async create(createComponDto: CreateComponDto): Promise<RuleResType<any>> {
     const data = await this.componModel.save(createComponDto);
     if (data) {
-      return { code: 0, message: '创建成功', data };
+      return { code: 200, message: '创建成功', data };
     }
     return { code: -1, message: '创建失败', data };
   }
 
   async findAll(): Promise<RuleResType<any>> {
-    const data = await this.componModel.find();
-    return { code: 0, message: '查询成功', data };
+    const data = await this.componModel.find({
+      relations: ['parent'],
+      join: {
+        alias: 'compon',
+        leftJoinAndSelect: {
+          parent: 'compon.parent',
+        },
+      },
+    });
+    return { code: 200, message: '查询成功', data };
   }
 
   async update(
@@ -32,7 +40,7 @@ export class ComponService {
   ): Promise<RuleResType<any>> {
     const data = await this.componModel.update(id, updateComponDto);
     if (data) {
-      return { code: 0, message: '更新成功', data };
+      return { code: 200, message: '更新成功', data };
     }
     return { code: -1, message: '更新失败', data };
   }
@@ -57,7 +65,7 @@ export class ComponService {
       // throw new Error('错误了'); // 测试主动抛出异常是否回滚
       const data = await this.componModel.delete(id);
       await await queryRunner.commitTransaction();
-      return { code: 0, message: '删除成功', data };
+      return { code: 200, message: '删除成功', data };
     } catch (e) {
       await queryRunner.rollbackTransaction();
       throw new BadRequestException('删除失败');

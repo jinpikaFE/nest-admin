@@ -34,7 +34,7 @@ export class LoginService {
           const res = await this.authService.certificate(authResult?.user);
           if (authResult?.user?.userName === 'admin') {
             return {
-              code: 0,
+              code: 200,
               message: '管理员登录成功',
               data: {
                 token: res?.data?.token,
@@ -44,7 +44,7 @@ export class LoginService {
             };
           }
           return {
-            code: 0,
+            code: 200,
             message: '登录成功',
             data: {
               ...userInfo,
@@ -67,7 +67,7 @@ export class LoginService {
     }
     if (loginType === 'phone') {
       return {
-        code: 0,
+        code: 200,
         message: '管理员登录成功',
         data: {
           token: '手机号登录',

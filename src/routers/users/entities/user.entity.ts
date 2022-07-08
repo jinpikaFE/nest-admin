@@ -41,7 +41,7 @@ export class User {
   @ApiProperty()
   @ManyToOne(() => Role, (role) => role.user)
   @JoinColumn()
-  role: Role[];
+  role: Role;
 
   @IsString({ message: '头像必须是 String 类型' })
   @IsNotEmpty({ message: '头像不能为空' })
