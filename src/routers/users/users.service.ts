@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RedisInstance } from 'src/providers/database/redis';
 import { RuleResType } from 'src/types/global';
 import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
 import { Repository } from 'typeorm';
@@ -16,9 +17,16 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
-    const { username, password, email, phone, role, avatar } = createUserDto;
+    const { username, password, email, phone, role, avatar, captcha } =
+      createUserDto;
     const salt = makeSalt(); // 制作密码盐
     const hashPwd = encryptPassword(password, salt); // 加密密码
+    const redis = await RedisInstance.initRedis('captcha', 0);
+    const cache = await redis.get(createUserDto?.phone);
+
+    if (captcha !== cache) {
+      return { code: -1, message: '短信验证码错误', data: null };
+    }
 
     await this.userModel.save({
       username,
@@ -30,6 +38,32 @@ export class UsersService {
       avatar,
     });
     return { code: 200, message: '创建成功', data: null };
+  }
+
+  async findOne(id: string): Promise<RuleResType<any>> {
+    const data = await this.userModel
+      .createQueryBuilder()
+      .leftJoinAndSelect('User.role', 'role')
+      .select([
+        'User.id',
+        'User.username',
+        'User.email',
+        'User.phone',
+        'User.avatar',
+        'User.createTime',
+        'User.updateTime',
+        'role.id',
+        'role.name',
+        'role.authority',
+      ])
+      .where({ id })
+      .getOne();
+
+    return {
+      code: 200,
+      message: '查询成功',
+      data,
+    };
   }
 
   async findAll(params): Promise<RuleResType<any>> {
@@ -47,7 +81,18 @@ export class UsersService {
       .createQueryBuilder()
       /** 第一个是关系， 第二个是表别名 */
       .leftJoinAndSelect('User.role', 'role')
-      .select(['User', 'role.id', 'role.name', 'role.authority'])
+      .select([
+        'User.id',
+        'User.username',
+        'User.email',
+        'User.phone',
+        'User.avatar',
+        'User.createTime',
+        'User.updateTime',
+        'role.id',
+        'role.name',
+        'role.authority',
+      ])
       .where({});
     if (userName) {
       data = data.andWhere({ userName });
@@ -85,7 +130,14 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<RuleResType<any>> {
-    const { username, email, phone, role, avatar } = updateUserDto;
+    const { username, email, phone, role, avatar, captcha } = updateUserDto;
+    const redis = await RedisInstance.initRedis('captcha', 0);
+    const cache = await redis.get(updateUserDto?.phone);
+
+    if (captcha !== cache) {
+      return { code: -1, message: '短信验证码错误', data: null };
+    }
+
     const data = await this.userModel.update(id, {
       username,
       email,

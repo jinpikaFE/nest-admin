@@ -8,6 +8,9 @@ import { BUCKET, CosInit, COS_URL } from '../../utils/tencent';
 @Injectable()
 export class UploadService {
   async uploadFile(file: Express.Multer.File, request: Request) {
+    if (!file) {
+      return { code: -1, message: '请上传文件', data: null };
+    }
     const data: any = await new Promise((reslove, reject) => {
       const key = `file/${moment().format('YYYY-MM-DD')}/${
         file.originalname
@@ -32,7 +35,7 @@ export class UploadService {
       );
     });
     if (data?.statusCode === 200) {
-      return { code: 0, message: '上传成功', data };
+      return { code: 200, message: '上传成功', data };
     }
     return { code: -1, message: '上传失败', data };
   }

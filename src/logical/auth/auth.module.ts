@@ -16,7 +16,7 @@ import { User } from 'src/routers/users/entities/user.entity';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '5h' }, // token 过期时效
+      signOptions: { expiresIn: '24h' }, // token 过期时效
     }),
     UsersModule,
     TypeOrmModule.forFeature([User]),

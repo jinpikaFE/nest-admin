@@ -10,6 +10,7 @@ import { RolesModule } from './routers/roles/roles.module';
 import { UploadModule } from './routers/upload/upload.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ComponModule } from './routers/compon/compon.module';
+import { SmsModule } from './routers/sms/sms.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ComponModule } from './routers/compon/compon.module';
     RolesModule,
     UploadModule,
     ComponModule,
+    SmsModule,
   ],
   providers: [
     {
