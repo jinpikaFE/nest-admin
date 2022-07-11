@@ -55,6 +55,7 @@ export class UsersService {
         'role.id',
         'role.name',
         'role.authority',
+        'role.is_super',
       ])
       .where({ id })
       .getOne();
@@ -92,6 +93,7 @@ export class UsersService {
         'role.id',
         'role.name',
         'role.authority',
+        'role.is_super',
       ])
       .where({});
     if (userName) {
