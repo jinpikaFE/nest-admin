@@ -18,60 +18,45 @@ export class AuthService {
   ) {}
 
   // JWT验证 - Step 2: 校验用户信息
-  async validateUser(userName: string, password: string): Promise<any> {
-    if (userName === 'admin') {
-      if (password === 'admin') {
+  async validateUser(username: string, password: string): Promise<any> {
+    const user = await this.userModel
+      .createQueryBuilder()
+      .where({ username })
+      .getOne();
+    if (user) {
+      const hashedPassword = user.password;
+      const salt = user.salt;
+      // 通过密码盐，加密传参，再与数据库里的比较，判断是否相等
+      const hashPassword = encryptPassword(password, salt);
+      if (hashedPassword === hashPassword) {
+        // 密码正确
         return {
           code: 0,
-          message: '管理员登录成功',
-          user: { userName },
+          user,
+          message: '密码正确',
+        };
+      } else {
+        // 密码错误
+        return {
+          code: -2,
+          user: null,
+          message: '密码错误',
         };
       }
-      return {
-        code: -2,
-        user: null,
-        message: '密码错误',
-      };
-    } else {
-      const user = await this.userModel
-        .createQueryBuilder()
-        .where({ userName })
-        .getOne();
-      if (user) {
-        const hashedPassword = user.password;
-        const salt = user.salt;
-        // 通过密码盐，加密传参，再与数据库里的比较，判断是否相等
-        const hashPassword = encryptPassword(password, salt);
-        if (hashedPassword === hashPassword) {
-          // 密码正确
-          return {
-            code: 0,
-            user,
-            message: '密码正确',
-          };
-        } else {
-          // 密码错误
-          return {
-            code: -2,
-            user: null,
-            message: '密码错误',
-          };
-        }
-      }
-      // 查无此人
-      return {
-        code: -1,
-        user: null,
-        message: '查无此人',
-      };
     }
+    // 查无此人
+    return {
+      code: -1,
+      user: null,
+      message: '查无此人',
+    };
   }
 
   // JWT验证 - Step 3: 处理 jwt 签证
   async certificate(user: any) {
     const payload = {
-      userName: user.userName,
-      _id: user.userName === 'admin' ? 0 : user?._id,
+      username: user.username,
+      id: user?.id,
     };
     try {
       const token = this.jwtService.sign(payload);
@@ -80,7 +65,7 @@ export class AuthService {
       // 将用户信息和 token 存入 redis，并设置失效时间，语法：[key, seconds, value]
       try {
         await redis.setex(
-          `${payload._id}-${payload.userName}`,
+          `${payload.id}-${payload.username}`,
           24 * 60 * 60,
           `${token}`,
         );

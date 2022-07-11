@@ -15,39 +15,12 @@ export class LoginService {
       );
       switch (authResult.code) {
         case 0:
-          const {
-            username: name,
-            email,
-            phone,
-            role,
-            avatar,
-            registerTime,
-          } = authResult?.user;
-          const userInfo = {
-            userName: name,
-            email,
-            phone,
-            role,
-            avatar,
-            registerTime,
-          };
           const res = await this.authService.certificate(authResult?.user);
-          if (authResult?.user?.userName === 'admin') {
-            return {
-              code: 200,
-              message: '管理员登录成功',
-              data: {
-                token: res?.data?.token,
-                role: 'admin',
-                userName: 'admin',
-              },
-            };
-          }
           return {
             code: 200,
             message: '登录成功',
             data: {
-              ...userInfo,
+              userId: authResult?.user?.id,
               token: res?.data?.token,
             },
           };
