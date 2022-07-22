@@ -7,8 +7,6 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
-  OneToOne,
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
@@ -21,19 +19,19 @@ export class User {
   @IsString({ message: '用户名必须是 String 类型' })
   @IsNotEmpty({ message: '用户名不能为空' })
   @ApiProperty({ uniqueItems: true })
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   username: string;
 
   @IsString({ message: '邮箱必须是 String 类型' })
   @IsNotEmpty({ message: '邮箱不能为空' })
   @ApiProperty({ uniqueItems: true })
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   email: string;
 
   @IsString({ message: '手机号必须是 String 类型' })
   @IsNotEmpty({ message: '手机号不能为空' })
   @ApiProperty({ uniqueItems: true })
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   phone: string;
 
   // @IsString({ message: '角色id必须是 String 类型' })
@@ -46,13 +44,13 @@ export class User {
   @IsString({ message: '头像必须是 String 类型' })
   @IsNotEmpty({ message: '头像不能为空' })
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   avatar: string;
 
   @IsString({ message: '密码必须是 String 类型' })
   @IsNotEmpty({ message: '密码不能为空' })
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @Column({ nullable: true })
