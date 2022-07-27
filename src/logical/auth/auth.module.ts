@@ -10,6 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { UsersService } from 'src/routers/users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/routers/users/entities/user.entity';
+import { Role } from 'src/routers/roles/entities/role.entity';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { User } from 'src/routers/users/entities/user.entity';
     }),
     UsersModule,
     TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([Role]),
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy, UsersService],

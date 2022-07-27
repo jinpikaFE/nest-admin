@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
-import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
+import { getConnection, Repository } from 'typeorm';
+import { Compon } from '../compon/entities/compon.entity';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
@@ -12,21 +12,37 @@ export class RolesService {
   constructor(
     @InjectRepository(Role)
     private readonly roleModel: Repository<Role>,
-    @InjectRepository(User)
-    private readonly userModel: Repository<User>,
+    @InjectRepository(Compon)
+    private readonly componModel: Repository<Compon>,
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<RuleResType<any>> {
-    const { name, authority, desc } = createRoleDto;
-    const data = await this.roleModel.save({
-      desc,
-      name,
-      authority,
-    });
-    if (data) {
+    const { name, compon, desc } = createRoleDto;
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const componList = [];
+      for (let i = 0; i < compon.length; i++) {
+        const componObj = await this.componModel
+          .createQueryBuilder()
+          .where({ id: compon[i] })
+          .getOne();
+        if (!componObj) throw new BadRequestException('组件id不存在');
+        componList.push(componObj);
+      }
+      const data = await this.roleModel.save({
+        desc,
+        name,
+        compon: componList,
+      });
+      await await queryRunner.commitTransaction();
       return { code: 200, message: '创建成功', data };
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e);
     }
-    return { code: -1, message: '创建失败', data };
   }
 
   async filterQuery(params): Promise<RuleResType<any>> {
@@ -39,7 +55,11 @@ export class RolesService {
       startTime,
       endTime,
     } = params;
-    let data = this.roleModel.createQueryBuilder().where({});
+    let data = this.roleModel
+      .createQueryBuilder()
+      /** 第一个是关系， 第二个是表别名 */
+      .leftJoinAndSelect('Role.compon', 'compon')
+      .where({});
     if (name) {
       data = data.andWhere({ name });
     }
@@ -64,7 +84,11 @@ export class RolesService {
   }
 
   async findAll(): Promise<RuleResType<any>> {
-    const data = await this.roleModel.find();
+    const data = await this.roleModel
+      .createQueryBuilder()
+      /** 第一个是关系， 第二个是表别名 */
+      .leftJoinAndSelect('Role.compon', 'compon')
+      .getMany();
     return { code: 200, message: '查询成功', data };
   }
 
@@ -72,23 +96,51 @@ export class RolesService {
     id: string,
     updateRoleDto: UpdateRoleDto,
   ): Promise<RuleResType<any>> {
-    const data = await this.roleModel.update(id, updateRoleDto);
-    if (data) {
+    const { name, compon, desc } = updateRoleDto;
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const componList = [];
+      if (compon) {
+        for (let i = 0; i < compon.length; i++) {
+          const componObj = await this.componModel
+            .createQueryBuilder()
+            .where({ id: compon[i] })
+            .getOne();
+          if (!componObj) throw new BadRequestException('组件id不存在');
+          componList.push(componObj);
+        }
+      }
+      const roleEntity = new Role();
+      roleEntity.id = +id;
+      roleEntity.name = name;
+      roleEntity.desc = desc;
+      if (compon) {
+        roleEntity.compon = componList;
+      }
+      const data = await this.roleModel.save(roleEntity);
+      await await queryRunner.commitTransaction();
       return { code: 200, message: '更新成功', data };
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e);
     }
-    return { code: -1, message: '更新失败', data };
   }
 
   async remove(id: string): Promise<RuleResType<any>> {
-    const resUser = await this.userModel
-      .createQueryBuilder()
-      .where({ role: id })
-      .getMany();
-    if (resUser.length > 0) {
-      return { code: -1, message: '删除失败,该角色下存在用户', data: null };
-    } else {
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
       const data = await this.roleModel.delete(id);
+      await await queryRunner.commitTransaction();
       return { code: 200, message: '删除成功', data };
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e);
     }
   }
 }

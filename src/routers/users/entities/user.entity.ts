@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
-  ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -37,9 +37,9 @@ export class User {
   // @IsString({ message: '角色id必须是 String 类型' })
   @IsNotEmpty({ message: '角色id不能为空' })
   @ApiProperty()
-  @ManyToOne(() => Role, (role) => role.user)
-  @JoinColumn()
-  role: Role;
+  @ManyToMany(() => Role)
+  @JoinTable()
+  role: Role[];
 
   @IsString({ message: '头像必须是 String 类型' })
   @IsNotEmpty({ message: '头像不能为空' })

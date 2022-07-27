@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RuleResType } from 'src/types/global';
 import { Repository, getConnection } from 'typeorm';
+import { Role } from '../roles/entities/role.entity';
 import { CreateComponDto } from './dto/create-compon.dto';
 import { UpdateComponDto } from './dto/update-compon.dto';
 import { Compon } from './entities/compon.entity';
@@ -11,6 +12,8 @@ export class ComponService {
   constructor(
     @InjectRepository(Compon)
     private readonly componModel: Repository<Compon>,
+    @InjectRepository(Role)
+    private readonly roleModel: Repository<Role>,
   ) {}
 
   async create(createComponDto: CreateComponDto): Promise<RuleResType<any>> {
@@ -62,7 +65,6 @@ export class ComponService {
         await queryRunner.rollbackTransaction();
         return { code: -1, message: '删除失败，请先删除子组件', data: null };
       }
-      // throw new Error('错误了'); // 测试主动抛出异常是否回滚
       const data = await this.componModel.delete(id);
       await await queryRunner.commitTransaction();
       return { code: 200, message: '删除成功', data };

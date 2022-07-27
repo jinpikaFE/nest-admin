@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { User } from 'src/routers/users/entities/user.entity';
+import { Compon } from 'src/routers/compon/entities/compon.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity()
@@ -27,17 +28,14 @@ export class Role {
   @Column()
   desc: string;
 
-  @IsNotEmpty({ message: '权限不能为空' })
+  @IsNotEmpty({ message: '组件不能为空' })
   @ApiProperty()
-  @Column({ type: 'simple-array' })
-  authority: string[];
+  @ManyToMany(() => Compon)
+  @JoinTable()
+  compon: Compon[];
 
   @Column({ default: false })
   is_super: boolean;
-
-  @ApiProperty()
-  @OneToMany(() => User, (user) => user.role) // 将另一面指定为第二个参数
-  user: User[];
 
   @CreateDateColumn({
     type: 'timestamp',

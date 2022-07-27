@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RedisInstance } from 'src/providers/database/redis';
 import { RuleResType } from 'src/types/global';
 import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
+import { Role } from '../roles/entities/role.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,36 +15,58 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userModel: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleModel: Repository<Role>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
     const { username, password, email, phone, role, avatar, captcha } =
       createUserDto;
-    const salt = makeSalt(); // 制作密码盐
-    const hashPwd = encryptPassword(password, salt); // 加密密码
-    const redis = await RedisInstance.initRedis('captcha', 0);
-    const cache = await redis.get(createUserDto?.phone);
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const salt = makeSalt(); // 制作密码盐
+      const hashPwd = encryptPassword(password, salt); // 加密密码
+      const redis = await RedisInstance.initRedis('captcha', 0);
+      const cache = await redis.get(createUserDto?.phone);
+      if (captcha !== cache) {
+        return { code: -1, message: '短信验证码错误', data: null };
+      }
 
-    if (captcha !== cache) {
-      return { code: -1, message: '短信验证码错误', data: null };
+      const roleList = [];
+      for (let i = 0; i < role.length; i++) {
+        const roleObj = await this.roleModel
+          .createQueryBuilder()
+          .where({ id: role[i] })
+          .getOne();
+        if (!roleObj) throw new BadRequestException(`${role[i]} 角色id不存在`);
+        roleList.push(roleObj);
+      }
+
+      await this.userModel.save({
+        username,
+        password: hashPwd,
+        salt,
+        email,
+        phone,
+        role: roleList,
+        avatar,
+      });
+      await queryRunner.commitTransaction();
+      return { code: 200, message: '创建成功', data: null };
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e);
     }
-
-    await this.userModel.save({
-      username,
-      password: hashPwd,
-      salt,
-      email,
-      phone,
-      role,
-      avatar,
-    });
-    return { code: 200, message: '创建成功', data: null };
   }
 
   async findOne(id: string): Promise<RuleResType<any>> {
     const data = await this.userModel
       .createQueryBuilder()
       .leftJoinAndSelect('User.role', 'role')
+      .leftJoinAndSelect('role.compon', 'compon')
       .select([
         'User.id',
         'User.username',
@@ -52,10 +75,8 @@ export class UsersService {
         'User.avatar',
         'User.createTime',
         'User.updateTime',
-        'role.id',
-        'role.name',
-        'role.authority',
-        'role.is_super',
+        'role',
+        'compon.name',
       ])
       .where({ id })
       .getOne();
@@ -82,6 +103,7 @@ export class UsersService {
       .createQueryBuilder()
       /** 第一个是关系， 第二个是表别名 */
       .leftJoinAndSelect('User.role', 'role')
+      .leftJoinAndSelect('role.compon', 'compon')
       .select([
         'User.id',
         'User.username',
@@ -90,10 +112,8 @@ export class UsersService {
         'User.avatar',
         'User.createTime',
         'User.updateTime',
-        'role.id',
-        'role.name',
-        'role.authority',
-        'role.is_super',
+        'role',
+        'compon.name',
       ])
       .where({});
     if (userName) {
@@ -133,24 +153,51 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<RuleResType<any>> {
     const { username, email, phone, role, avatar, captcha } = updateUserDto;
-    const redis = await RedisInstance.initRedis('captcha', 0);
-    const cache = await redis.get(updateUserDto?.phone);
+    const connection = getConnection();
+    const queryRunner = connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const redis = await RedisInstance.initRedis('captcha', 0);
+      const cache = await redis.get(updateUserDto?.phone);
 
-    if (captcha !== cache) {
-      return { code: -1, message: '短信验证码错误', data: null };
-    }
+      if (captcha !== cache) {
+        return { code: -1, message: '短信验证码错误', data: null };
+      }
 
-    const data = await this.userModel.update(id, {
-      username,
-      email,
-      phone,
-      role,
-      avatar,
-    });
-    if (data) {
-      return { code: 200, message: '更新成功', data };
+      const roleList = [];
+      if (role) {
+        for (let i = 0; i < role.length; i++) {
+          const roleObj = await this.roleModel
+            .createQueryBuilder()
+            .where({ id: role[i] })
+            .getOne();
+          if (!roleObj)
+            throw new BadRequestException(`${role[i]} 角色id不存在`);
+          roleList.push(roleObj);
+        }
+      }
+
+      const userEntity = new User();
+      userEntity.id = +id;
+      userEntity.username = username;
+      userEntity.email = email;
+      userEntity.phone = phone;
+      userEntity.avatar = avatar;
+      if (role) {
+        userEntity.role = roleList;
+      }
+      const data = await this.userModel.save(userEntity);
+      if (data) {
+        await queryRunner.commitTransaction();
+        return { code: 200, message: '更新成功', data };
+      }
+      await queryRunner.rollbackTransaction();
+      return { code: -1, message: '更新失败', data: null };
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException(e);
     }
-    return { code: -1, message: '更新失败', data };
   }
 
   async remove(id: string): Promise<RuleResType<any>> {

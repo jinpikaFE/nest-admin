@@ -14,7 +14,6 @@ import { SmsModule } from './routers/sms/sms.module';
 
 @Module({
   imports: [
-    UsersModule,
     LoginModule,
     AuthModule,
     ServeStaticModule.forRoot({
@@ -40,6 +39,7 @@ import { SmsModule } from './routers/sms/sms.module';
       autoLoadEntities: true,
       timezone: '+08:00', // 东八时区
     }),
+    UsersModule,
     RolesModule,
     UploadModule,
     ComponModule,
