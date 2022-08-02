@@ -34,6 +34,11 @@ export class Role {
   @JoinTable()
   compon: Compon[];
 
+  @ApiProperty()
+  @ManyToMany(() => Compon)
+  @JoinTable()
+  half_compon: Compon[];
+
   @Column({ default: false })
   is_super: boolean;
 

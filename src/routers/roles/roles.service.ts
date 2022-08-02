@@ -17,7 +17,7 @@ export class RolesService {
   ) {}
 
   async create(createRoleDto: CreateRoleDto): Promise<RuleResType<any>> {
-    const { name, compon, desc } = createRoleDto;
+    const { name, compon, desc, half_compon } = createRoleDto;
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
@@ -32,10 +32,20 @@ export class RolesService {
         if (!componObj) throw new BadRequestException('组件id不存在');
         componList.push(componObj);
       }
+      const halfComponList = [];
+      for (let i = 0; i < half_compon.length; i++) {
+        const componObj = await this.componModel
+          .createQueryBuilder()
+          .where({ id: half_compon[i] })
+          .getOne();
+        if (!componObj) throw new BadRequestException('组件id不存在');
+        halfComponList.push(componObj);
+      }
       const data = await this.roleModel.save({
         desc,
         name,
         compon: componList,
+        half_compon: halfComponList,
       });
       await await queryRunner.commitTransaction();
       return { code: 200, message: '创建成功', data };
@@ -59,6 +69,7 @@ export class RolesService {
       .createQueryBuilder()
       /** 第一个是关系， 第二个是表别名 */
       .leftJoinAndSelect('Role.compon', 'compon')
+      .leftJoinAndSelect('Role.half_compon', 'half_compon')
       .where({});
     if (name) {
       data = data.andWhere({ name });
@@ -88,6 +99,7 @@ export class RolesService {
       .createQueryBuilder()
       /** 第一个是关系， 第二个是表别名 */
       .leftJoinAndSelect('Role.compon', 'compon')
+      .leftJoinAndSelect('Role.half_compon', 'half_compon')
       .getMany();
     return { code: 200, message: '查询成功', data };
   }
@@ -96,7 +108,7 @@ export class RolesService {
     id: string,
     updateRoleDto: UpdateRoleDto,
   ): Promise<RuleResType<any>> {
-    const { name, compon, desc } = updateRoleDto;
+    const { name, compon, desc, half_compon } = updateRoleDto;
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
     await queryRunner.connect();
@@ -113,12 +125,26 @@ export class RolesService {
           componList.push(componObj);
         }
       }
+      const halfComponList = [];
+      if (half_compon) {
+        for (let i = 0; i < half_compon.length; i++) {
+          const componObj = await this.componModel
+            .createQueryBuilder()
+            .where({ id: half_compon[i] })
+            .getOne();
+          if (!componObj) throw new BadRequestException('组件id不存在');
+          halfComponList.push(componObj);
+        }
+      }
       const roleEntity = new Role();
       roleEntity.id = +id;
       roleEntity.name = name;
       roleEntity.desc = desc;
       if (compon) {
         roleEntity.compon = componList;
+      }
+      if (half_compon) {
+        roleEntity.half_compon = halfComponList;
       }
       const data = await this.roleModel.save(roleEntity);
       await await queryRunner.commitTransaction();
