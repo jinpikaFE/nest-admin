@@ -5,7 +5,7 @@ const log4jsConfig = {
     /** logstash 配置 */
     logstash: {
       type: '@log4js-node/logstash-http',
-      url: 'http://192.168.56.10:9200/_bulk',
+      url: 'http://110.40.192.199:9200/_bulk',
       application: 'nest-admin',
       logType: 'application',
       logChannel: 'node',
@@ -15,21 +15,21 @@ const log4jsConfig = {
     },
     access: {
       type: '@log4js-node/logstash-http',
-      url: 'http://192.168.56.10:9200/_bulk',
+      url: 'http://110.40.192.199:9200/_bulk',
       application: 'nest-admin-access',
       logType: 'access',
       logChannel: 'node',
     },
     app: {
       type: '@log4js-node/logstash-http',
-      url: 'http://192.168.56.10:9200/_bulk',
+      url: 'http://110.40.192.199:9200/_bulk',
       application: 'nest-admin-app',
       logType: 'app',
       logChannel: 'node',
     },
     errors: {
       type: '@log4js-node/logstash-http',
-      url: 'http://192.168.56.10:9200/_bulk',
+      url: 'http://110.40.192.199:9200/_bulk',
       application: 'nest-admin',
       logType: 'errors',
       logChannel: 'node',
