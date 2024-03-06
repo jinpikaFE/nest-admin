@@ -11,6 +11,8 @@ import { UploadModule } from './routers/upload/upload.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ComponModule } from './routers/compon/compon.module';
 import { SmsModule } from './routers/sms/sms.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import config from './config/config';
 
 @Module({
   imports: [
@@ -28,16 +30,24 @@ import { SmsModule } from './routers/sms/sms.module';
       rootPath: join(__dirname, '..', 'web'),
       serveRoot: '',
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'q847164495',
-      database: 'nest_admin',
-      synchronize: true,
-      autoLoadEntities: true,
-      timezone: '+08:00', // 东八时区
+    /** 环境变量配置 */
+    ConfigModule.forRoot({
+      load: [config],
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule], // 记得导入 ConfigModule
+      useFactory: async (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get<string>('database.host'),
+        port: configService.get<number>('database.port'),
+        username: configService.get<string>('database.username'),
+        password: configService.get<string>('database.password'),
+        database: configService.get<string>('database.database'),
+        synchronize: true,
+        autoLoadEntities: true,
+        timezone: '+08:00', // 东八时区
+      }),
+      inject: [ConfigService],
     }),
     UsersModule,
     RolesModule,

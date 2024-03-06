@@ -25,6 +25,7 @@
   "dependencies": {
     "@log4js-node/logstash-http": "^1.1.0",
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/mapped-types": "*",

@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 import { logger } from './middleware/logger.middleware';
 import * as express from 'express';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: console });
@@ -34,6 +35,9 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalFilters(new AllExceptionsFilter());
-  await app.listen(3003);
+
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('port');
+  await app.listen(port);
 }
 bootstrap();
