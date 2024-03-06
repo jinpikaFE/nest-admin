@@ -13,6 +13,8 @@ import { ComponModule } from './routers/compon/compon.module';
 import { SmsModule } from './routers/sms/sms.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config/config';
+// import { CosModule } from './modules/cos/cos.module';
+// import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
@@ -50,6 +52,16 @@ import config from './config/config';
       }),
       inject: [ConfigService],
     }),
+    // RedisModule.forRootAsync({
+    //   imports: [ConfigModule], // 记得导入 ConfigModule
+    //   useFactory: async (configService: ConfigService) => ({
+    //     type: 'single',
+    //     url: `redis://${configService.get<string>(
+    //       'redis.host',
+    //     )}:${configService.get<string>('redis.port')}`,
+    //   }),
+    //   inject: [ConfigService],
+    // }),
     UsersModule,
     RolesModule,
     UploadModule,

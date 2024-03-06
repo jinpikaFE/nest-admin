@@ -1,12 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import * as moment from 'moment';
-import * as fs from 'fs';
-import * as path from 'path';
-import { BUCKET, CosInit, COS_URL } from '../../utils/tencent';
+import { ConfigService } from '@nestjs/config';
+import { CosService } from 'src/modules/cos/cos.service';
 
 @Injectable()
 export class UploadService {
+  constructor(
+    private configService: ConfigService,
+    private cosService: CosService,
+  ) {}
+
   async uploadFile(file: Express.Multer.File, request: Request) {
     if (!file) {
       return { code: -1, message: '请上传文件', data: null };
@@ -15,10 +19,16 @@ export class UploadService {
       const key = `file/${moment().format('YYYY-MM-DD')}/${
         file.originalname
       }.png`;
-      CosInit.putObject(
+      this.cosService.CosInit.putObject(
         {
-          Bucket: BUCKET /* 填入您自己的存储桶，必须字段 */,
-          Region: 'ap-shanghai' /* 存储桶所在地域，例如ap-beijing，必须字段 */,
+          Bucket:
+            this.configService.get<string>(
+              'tencent.BUCKET',
+            ) /* 填入您自己的存储桶，必须字段 */,
+          Region:
+            this.configService.get<string>(
+              'tencent.cosRegion',
+            ) /* 存储桶所在地域，例如ap-beijing，必须字段 */,
           Key: key /* 存储在桶里的对象键（例如1.jpg，a/b/test.txt），必须字段 */,
           Body: file.buffer, // 上传文件对象
           ContentLength: file.size,
@@ -30,7 +40,10 @@ export class UploadService {
           if (err) {
             reject(err);
           }
-          reslove({ ...datas, url: `${COS_URL}/${key}` });
+          reslove({
+            ...datas,
+            url: `${this.configService.get<string>('tencent.COS_URL')}/${key}`,
+          });
         },
       );
     });

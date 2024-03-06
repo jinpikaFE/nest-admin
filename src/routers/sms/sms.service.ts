@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { RuleResType } from 'src/types/global';
 import { CreateSmsDto } from './dto/create-sms.dto';
 import * as tencentcloud from 'tencentcloud-sdk-nodejs';
-import { TencentConfig } from 'src/config/tencent';
 import { RedisInstance } from 'src/providers/database/redis';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SmsService {
+  constructor(private configService: ConfigService) {}
+
   async sendSms(createSmsDto: CreateSmsDto): Promise<RuleResType<any>> {
     // 导入对应产品模块的client models。
     const smsClient = tencentcloud.sms.v20210111.Client;
@@ -19,11 +21,11 @@ export class SmsService {
          * 你也可以直接在代码中写死密钥对，但是小心不要将代码复制、上传或者分享给他人，
          * 以免泄露密钥对危及你的财产安全。
          * SecretId、SecretKey 查询: https://console.cloud.tencent.com/cam/capi */
-        secretId: TencentConfig.SecretId,
-        secretKey: TencentConfig.SecretKey,
+        secretId: this.configService.get<string>('tencent.SecretId'),
+        secretKey: this.configService.get<string>('tencent.SecretKey'),
       },
       /* 必填：地域信息，可以直接填写字符串ap-guangzhou，支持的地域列表参考 https://cloud.tencent.com/document/api/382/52071#.E5.9C.B0.E5.9F.9F.E5.88.97.E8.A1.A8 */
-      region: TencentConfig.region,
+      region: this.configService.get<string>('tencent.sms_region'),
       /* 非必填:
        * 客户端配置对象，可以指定超时时间等配置 */
       profile: {
@@ -63,13 +65,13 @@ export class SmsService {
     const params = {
       /* 短信应用ID: 短信SmsSdkAppId在 [短信控制台] 添加应用后生成的实际SmsSdkAppId，示例如1400006666 */
       // 应用 ID 可前往 [短信控制台](https://console.cloud.tencent.com/smsv2/app-manage) 查看
-      SmsSdkAppId: TencentConfig.SMS_APPID,
+      SmsSdkAppId: this.configService.get<string>('tencent.SMS_APPID'),
       /* 短信签名内容: 使用 UTF-8 编码，必须填写已审核通过的签名 */
       // 签名信息可前往 [国内短信](https://console.cloud.tencent.com/smsv2/csms-sign) 或 [国际/港澳台短信](https://console.cloud.tencent.com/smsv2/isms-sign) 的签名管理查看
-      SignName: TencentConfig.SIGN_NAME,
+      SignName: this.configService.get<string>('tencent.SIGN_NAME'),
       /* 模板 ID: 必须填写已审核通过的模板 ID */
       // 模板 ID 可前往 [国内短信](https://console.cloud.tencent.com/smsv2/csms-template) 或 [国际/港澳台短信](https://console.cloud.tencent.com/smsv2/isms-template) 的正文模板管理查看
-      TemplateId: TencentConfig.TEMP_ID,
+      TemplateId: this.configService.get<string>('tencent.TEMP_ID'),
       /* 模板参数: 模板参数的个数需要与 TemplateId 对应模板的变量个数保持一致，若无模板参数，则设置为空 */
       TemplateParamSet: [randomVail, '5'],
       /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
