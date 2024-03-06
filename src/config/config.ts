@@ -7,4 +7,12 @@ export default () => ({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_DATABASE,
   },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  },
+  initAdmin: {
+    username: process.env.INIT_ADMIN_USERNAME,
+    password: process.env.INIT_ADMIN_PASSWORD,
+  },
 });

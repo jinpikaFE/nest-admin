@@ -32,6 +32,7 @@ import config from './config/config';
     }),
     /** 环境变量配置 */
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [config],
     }),
     TypeOrmModule.forRootAsync({

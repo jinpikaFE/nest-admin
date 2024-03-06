@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RedisInstance } from 'src/providers/database/redis';
 import { RuleResType } from 'src/types/global';
@@ -9,15 +9,43 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class UsersService {
+export class UsersService implements OnModuleInit {
   constructor(
     @InjectRepository(User)
     private readonly userModel: Repository<User>,
     @InjectRepository(Role)
     private readonly roleModel: Repository<Role>,
+    private configService: ConfigService,
   ) {}
+
+  async onModuleInit() {
+    await this.createAdminUser();
+  }
+
+  /** 初始创建管理员用户 */
+  private async createAdminUser() {
+    const username = this.configService.get<string>('initAdmin.username');
+    const password = this.configService.get<string>('initAdmin.password');
+    // 在这里编写创建 admin 用户的逻辑
+    const user = await this.userModel
+      .createQueryBuilder()
+      .where({ username })
+      .getOne();
+
+    /** 用户是否存在 */
+    if (!user) {
+      const salt = makeSalt(); // 制作密码盐
+      const hashPwd = encryptPassword(password, salt); // 加密密码
+      await this.userModel.save({
+        username,
+        password: hashPwd,
+        salt,
+      });
+    }
+  }
 
   async create(createUserDto: CreateUserDto): Promise<RuleResType<any>> {
     const { username, password, email, phone, role, avatar, captcha } =
