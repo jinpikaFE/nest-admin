@@ -50,23 +50,62 @@
 - swagger自动生成接口文档
 - Compodoc生成Nest项目说明文档
 
-## Installation
+## 一、安装依赖
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## 二、添加配置文件
+
+- 需要自行在项目根目录下创建.env文件
+- 新建修改配置需要在.env 和 config/config.ts 同时操作
+
+```bash
+# .env
+# 项目启动端口
+PORT=3003
+# 数据库配置
+# mysql 数据库
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USER=root
+DATABASE_PASSWORD=root
+DATABASE_DATABASE=nest_admin
+
+# 初始admin用户配置
+INIT_ADMIN_USERNAME=admin
+INIT_ADMIN_PASSWORD=adminjpk
+
+# jwt 配置
+JWT_SECRET=jinpika0517
+JWT_EXPIRES_IN=24h
+
+# 腾讯云
+# 不影响项目启动
+# 只影响文件上传接口和短信接口
+TENCENT_SECRET_ID=你的腾讯云配置
+TENCENT_SECRET_KEY=你的腾讯云配置
+TENCENT_SMS_REGION=你的腾讯云配置
+TENCENT_SMS_APPID=你的腾讯云配置
+TENCENT_SIGN_NAME=你的腾讯云配置
+TENCENT_TEMP_ID=你的腾讯云配置
+TENCENT_BUCKET=你的腾讯云配置
+TENCENT_COS_URL=你的腾讯云配置
+TENCENT_COS_REGION=你的腾讯云配置
+
+# redis配置
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PWD=
+```
+
+## 三、启动项目
 
 ```bash
 # development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
 ## Test
