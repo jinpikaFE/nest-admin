@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RedisInstance } from 'src/providers/database/redis';
 import { RuleResType } from 'src/types/global';
 import { encryptPassword, makeSalt } from 'src/utils/cryptogram';
 import { getConnection, Repository } from 'typeorm';
@@ -10,6 +9,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -19,6 +20,8 @@ export class UsersService implements OnModuleInit {
     @InjectRepository(Role)
     private readonly roleModel: Repository<Role>,
     private configService: ConfigService,
+    @InjectRedis()
+    private readonly redis: Redis,
   ) {}
 
   async onModuleInit() {
@@ -57,8 +60,7 @@ export class UsersService implements OnModuleInit {
     try {
       const salt = makeSalt(); // 制作密码盐
       const hashPwd = encryptPassword(password, salt); // 加密密码
-      const redis = await RedisInstance.initRedis('captcha', 0);
-      const cache = await redis.get(createUserDto?.phone);
+      const cache = await this.redis.get(createUserDto?.phone);
       if (captcha !== cache) {
         return { code: -1, message: '短信验证码错误', data: null };
       }
@@ -186,8 +188,7 @@ export class UsersService implements OnModuleInit {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const redis = await RedisInstance.initRedis('captcha', 0);
-      const cache = await redis.get(updateUserDto?.phone);
+      const cache = await this.redis.get(updateUserDto?.phone);
 
       if (captcha !== cache) {
         return { code: -1, message: '短信验证码错误', data: null };

@@ -1,20 +1,21 @@
 // src/logical/auth/auth.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../../routers/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '../../utils/cryptogram';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/routers/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { RedisInstance } from 'src/providers/database/redis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userModel: Repository<User>,
-    private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @InjectRedis()
+    private readonly redis: Redis,
   ) {}
 
   // JWT验证 - Step 2: 校验用户信息
@@ -61,10 +62,9 @@ export class AuthService {
     try {
       const token = this.jwtService.sign(payload);
       // 实例化 redis
-      const redis = await RedisInstance.initRedis('auth.certificate', 0);
       // 将用户信息和 token 存入 redis，并设置失效时间，语法：[key, seconds, value]
       try {
-        await redis.setex(
+        await this.redis.setex(
           `${payload.id}-${payload.username}`,
           24 * 60 * 60,
           `${token}`,

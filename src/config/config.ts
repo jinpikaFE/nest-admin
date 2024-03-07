@@ -28,6 +28,6 @@ export default () => ({
   },
   redis: {
     host: process.env.REDIS_HOST,
-    redis: process.env.REDIS_PORT,
+    port: process.env.REDIS_PORT,
   },
 });

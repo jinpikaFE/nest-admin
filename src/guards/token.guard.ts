@@ -1,14 +1,17 @@
 // src/guards/rbac.guard.ts
+import { InjectRedis } from '@nestjs-modules/ioredis';
 import {
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RedisInstance } from 'src/providers/database/redis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class RbacGuard implements CanActivate {
+  constructor(@InjectRedis() private readonly redis: Redis) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
@@ -26,9 +29,8 @@ export class RbacGuard implements CanActivate {
     const userinfo = JSON.parse(payloadBuffer.toString());
 
     // 获取 redis 里缓存的 token
-    const redis = await RedisInstance.initRedis('TokenGuard.canActivate', 0);
     const key = `${userinfo.id}-${userinfo.username}`;
-    const cache = await redis.get(key);
+    const cache = await this.redis.get(key);
 
     if (token !== cache) {
       // 如果 token 不匹配，禁止访问

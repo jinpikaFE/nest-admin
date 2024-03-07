@@ -6,7 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { RedisInstance } from 'src/providers/database/redis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class LoginService {
@@ -15,6 +16,8 @@ export class LoginService {
     private readonly jwtService: JwtService,
     @InjectRepository(User)
     private readonly userModel: Repository<User>,
+    @InjectRedis()
+    private readonly redis: Redis,
   ) {}
   async login(loginDto: LoginDto): Promise<RuleResType<any>> {
     const { username, password, loginType } = loginDto;
@@ -49,8 +52,7 @@ export class LoginService {
       }
     }
     if (loginType === 'phone') {
-      const redis = await RedisInstance.initRedis('captcha', 0);
-      const cache = await redis.get(username);
+      const cache = await this.redis.get(username);
 
       if (password !== cache) {
         return { code: -1, message: '短信验证码错误', data: null };
@@ -75,7 +77,7 @@ export class LoginService {
       };
       const token = this.jwtService.sign(payload);
       try {
-        await redis.setex(
+        await this.redis.setex(
           `${payload.id}-${payload.username}`,
           24 * 60 * 60,
           `${token}`,

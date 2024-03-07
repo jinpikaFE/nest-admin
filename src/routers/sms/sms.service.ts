@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { RuleResType } from 'src/types/global';
 import { CreateSmsDto } from './dto/create-sms.dto';
 import * as tencentcloud from 'tencentcloud-sdk-nodejs';
-import { RedisInstance } from 'src/providers/database/redis';
 import { ConfigService } from '@nestjs/config';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 
 @Injectable()
 export class SmsService {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    @InjectRedis()
+    private readonly redis: Redis,
+  ) {}
 
   async sendSms(createSmsDto: CreateSmsDto): Promise<RuleResType<any>> {
     // 导入对应产品模块的client models。
@@ -47,10 +52,8 @@ export class SmsService {
     });
 
     const randomVail = Math.random().toString().slice(-6);
-
-    const redis = await RedisInstance.initRedis('captcha', 0);
     try {
-      await redis.setex(createSmsDto.phone, 5 * 60, randomVail);
+      await this.redis.setex(createSmsDto.phone, 5 * 60, randomVail);
     } catch {
       return { code: -1, message: '短信发送失败', data: null };
     }
