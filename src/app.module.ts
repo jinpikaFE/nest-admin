@@ -39,7 +39,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule], // 记得导入 ConfigModule
       useFactory: async (configService: ConfigService) => ({
-        type: 'mysql',
+        type: 'postgres',
         host: configService.get<string>('database.host'),
         port: configService.get<number>('database.port'),
         username: configService.get<string>('database.username'),
@@ -47,7 +47,6 @@ import { RedisModule } from '@nestjs-modules/ioredis';
         database: configService.get<string>('database.database'),
         synchronize: true,
         autoLoadEntities: true,
-        timezone: '+08:00', // 东八时区
       }),
       inject: [ConfigService],
     }),
